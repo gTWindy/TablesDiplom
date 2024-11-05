@@ -1,3 +1,24 @@
+
+.login-container {
+    max-width: 300px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.input-username {
+    width: 90%;
+    padding: 8px;
+    margin: 5px 0;
+}
+
+.input-password {
+    width: 90%;
+    padding: 8px;
+    margin: 5px 0;
+}
+
 .login-button-submit {
     width: 100%;
     padding: 10px;
@@ -6,3 +27,13 @@
     border: none;
     border-radius: 5px;
 }
+
+.login-button-submit:hover {
+    background-color: #6eaf70;
+}
+
+.login-button-submit:active {
+    background-color: #317534;
+    transform: scale(0.99);
+}
+
