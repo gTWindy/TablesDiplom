@@ -56,6 +56,34 @@ app.get('/5kurs', (req, res) => {
     });
 });
 
+app.get('/manList', (req, res) => {
+    const path = require('path');
+
+    // Путь к папке с файлами
+    const filesDir = './test/5курс';
+
+    // Получаем массив имен файлов в указанной директории
+    const files = fs.readdirSync(filesDir).filter(file => path.extname(file) === '.json');
+
+    let mergedData = {};
+
+    for (const file of files) {
+        const filePath = path.join(filesDir, file);
+        const data = fs.readFileSync(filePath, 'utf8'); // Читаем файл
+        try {
+            const parsedData = JSON.parse(data); // Парсим JSON в объект
+            Object.assign(mergedData, parsedData); // Объединяем объекты
+        } catch (error) {
+            console.error(`Ошибка при парсинге файла ${file}:`, error.message);
+        }
+    }
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        mergedData,
+    });
+
+});
+
 app.get('/checkLogin', (req, res) => {
     res.json({ message: "Hello from the server!" });
 });
