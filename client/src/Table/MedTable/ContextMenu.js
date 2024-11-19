@@ -28,7 +28,6 @@ const ContextMenu = ({ x, y, selectedRowIndex, data, setData }) => {
     function handleInsert() {
         if (selectedRowIndex === null)
             return;
-        debugger;
         fetch('http://localhost:5000/manList') // Указываем URL ресурса
         .then(response => {
             if (!response.ok)
@@ -37,12 +36,13 @@ const ContextMenu = ({ x, y, selectedRowIndex, data, setData }) => {
         })
         .then(data => {
             console.log(data); // Выводим полученные данные в консоль
+            setItems(data.mergedData);
+            setShowModal(true);
         })
         .catch(error => {
             console.error('There has been a problem with your fetch operation:', error);
         });
-        setItems(['a', 'b', 'c', 'd']);
-        setShowModal(true);
+        
         //const newData = [...data];
         //newData.splice(selectedRowIndex + 1, 0, 
           //  Array.from({ length: 6 }, (_, colIndex) => ({

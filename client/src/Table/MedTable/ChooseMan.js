@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import './ChooseMan.css';
 const ChooseMan = ({ isOpen, onClose, items }) => {
+    let [selectedItem, setSelectedItem] = useState(null);
     if (!isOpen) return null;
-
     const handleClickOutside = (e) => {
         // Закрываем модалку при клике вне её области
         if (e.target === e.currentTarget) {
@@ -9,18 +10,41 @@ const ChooseMan = ({ isOpen, onClose, items }) => {
         }
     };
 
+    const onItemClick = (e) => {
+        debugger;
+        if (selectedItem)
+            selectedItem.style.backgroundColor = 'white';
+        setSelectedItem(e.currentTarget);
+        selectedItem.style.backgroundColor = 'gray';
+    }
+
     return (
         <div className="modal" onClick={handleClickOutside}>
             <div className="modal-content">
                 <h2>Список</h2>
                 <ul>
-                    {items.map((item) => <li>{item}</li>)}
-                    <li>1</li>
-                    <li>2</li>
-                    <li>3</li>
-                    <li>4</li>
+                    <li> 5111
+                        <ul>
+                            {items['5111'].map(
+                                (item) => 
+                                <li>
+                                    <div className='item' onClick={(event) => onItemClick(event) }>{item.ФИО}</div>
+                                </li>
+                            )}
+                        </ul>
+                    </li>
+                    <li> 5112
+                        <ul>
+                            {items['5112'].map(
+                                    (item) => 
+                                    <li>
+                                        <div className='item' onClick={(event) => onItemClick(event) }>{item.ФИО}</div>
+                                    </li>
+                                )}
+                        </ul>
+                    </li>
                 </ul>
-                <button onClick={onClose}>Закрыть</button>
+                <button onClick={onClose}>Выбрать</button>
             </div>
         </div>
     );
