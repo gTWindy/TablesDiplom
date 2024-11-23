@@ -70,7 +70,6 @@ const MedTable = () => {
                     {rows.map((row, rowIndex) => (
                                 <tr key={rowIndex} onContextMenu={(e) => handleContextMenu(e, rowIndex)}>
                                     <td>{rowIndex}</td>
-                                    <td></td>
                                     {row.map((cell, colIndex) => (
                                         <td key={cell.id}>
                                             <input className='cell-input'

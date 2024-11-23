@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import './ChooseMan.css';
 const ChooseMan = ({ isOpen, onClose, items }) => {
+    
     let [selectedItem, setSelectedItem] = useState(null);
+    let [selectedItemInfo, setSelectedItemInfo] = useState(null);
+
     if (!isOpen) return null;
     const handleClickOutside = (e) => {
         // Закрываем модалку при клике вне её области
@@ -10,12 +13,17 @@ const ChooseMan = ({ isOpen, onClose, items }) => {
         }
     };
 
-    const onItemClick = (e) => {
+    const onItemClick = (e, group, index) => {
         debugger;
         if (selectedItem)
             selectedItem.style.backgroundColor = 'white';
         setSelectedItem(e.currentTarget);
-        selectedItem.style.backgroundColor = 'gray';
+        e.currentTarget.style.backgroundColor = 'gray';
+        setSelectedItemInfo({
+            surname: items[group][index].ФИО,
+            rank: items[group][index]["Воинское звание"],
+            group: group
+        })
     }
 
     return (
@@ -26,9 +34,9 @@ const ChooseMan = ({ isOpen, onClose, items }) => {
                     <li> 5111
                         <ul>
                             {items['5111'].map(
-                                (item) => 
+                                (item, index) => 
                                 <li>
-                                    <div className='item' onClick={(event) => onItemClick(event) }>{item.ФИО}</div>
+                                    <div className='item' onClick={(event) => onItemClick(event, '5111', index) }>{item.ФИО}</div>
                                 </li>
                             )}
                         </ul>
@@ -36,15 +44,18 @@ const ChooseMan = ({ isOpen, onClose, items }) => {
                     <li> 5112
                         <ul>
                             {items['5112'].map(
-                                    (item) => 
+                                    (item, index) =>
                                     <li>
-                                        <div className='item' onClick={(event) => onItemClick(event) }>{item.ФИО}</div>
+                                        <div className='item' onClick={(event) => onItemClick(event, '5112', index) }>{item.ФИО}</div>
                                     </li>
                                 )}
                         </ul>
                     </li>
                 </ul>
-                <button onClick={onClose}>Выбрать</button>
+                <button 
+                    onClick={() => onClose(selectedItemInfo)}>
+                    Выбрать
+                </button>
             </div>
         </div>
     );

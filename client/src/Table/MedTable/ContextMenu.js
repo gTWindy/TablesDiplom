@@ -43,20 +43,23 @@ const ContextMenu = ({ x, y, selectedRowIndex, data, setData }) => {
             console.error('There has been a problem with your fetch operation:', error);
         });
         
-        //const newData = [...data];
-        //newData.splice(selectedRowIndex + 1, 0, 
-          //  Array.from({ length: 6 }, (_, colIndex) => ({
-                //id: `${selectedRowIndex}-${colIndex}`,
-                //value: ''
-            //}))
-        //);
-        //setData(newData);
         contextMenuRef.current.style.display = 'none';
     }
 
-    const closeModal = () => {
+    const closeModal = (newMan) => {
         setShowModal(false); // Закрываем модальное окно
-      };
+        const newData = [...data];
+        newData.splice(selectedRowIndex + 1, 0, 
+            Array.from({ length: 7 }, (_, colIndex) => ({
+                id: `${selectedRowIndex}-${colIndex}`,
+                value: ''
+            }))
+        );
+        newData[selectedRowIndex + 1][0].value = newMan.rank;
+        newData[selectedRowIndex + 1][1].value = newMan.surname;
+        newData[selectedRowIndex + 1][2].value = newMan.group;
+        setData(newData);
+    };
 
     return (
         <>
