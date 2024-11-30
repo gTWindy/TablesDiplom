@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import './ChooseMan.css';
-const ChooseMan = ({ isOpen, onClose, items }) => {
+const ChooseMan = ({ isOpen, x, y, onClose, items }) => {
     
     let [selectedItem, setSelectedItem] = useState(null);
     let [selectedItemInfo, setSelectedItemInfo] = useState(null);
 
-    if (!isOpen) return null;
+    if (!isOpen)
+        return null;
     const handleClickOutside = (e) => {
         // Закрываем модалку при клике вне её области
         if (e.target === e.currentTarget) {
@@ -20,14 +21,21 @@ const ChooseMan = ({ isOpen, onClose, items }) => {
         setSelectedItem(e.currentTarget);
         e.currentTarget.style.backgroundColor = 'gray';
         setSelectedItemInfo({
-            surname: items[group][index].ФИО,
+            name: items[group][index].ФИО,
             rank: items[group][index]["Воинское звание"],
             group: group
         })
     }
 
     return (
-        <div className="modal" onClick={handleClickOutside}>
+        <div
+        className="modal" 
+        onClick={handleClickOutside}
+        style={{
+            top: `${y}px`,
+            left: `${x}px`
+          }}
+        >
             <div className="modal-content">
                 <h2>Список</h2>
                 <ul>

@@ -1,0 +1,14 @@
+{
+    "sickPeople":
+    [
+        {
+            "rank": "Курсант",
+            "name": "Орлов Олег Орлович",
+            "group": 5111,
+            "nameMedInstitution": "Больница",
+            "diagnosis": "R2131",
+            "date": "13.01.2025",
+            "k/l": 123
+        }
+    ]
+}

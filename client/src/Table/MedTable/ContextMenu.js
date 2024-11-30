@@ -49,15 +49,14 @@ const ContextMenu = ({ x, y, selectedRowIndex, data, setData }) => {
     const closeModal = (newMan) => {
         setShowModal(false); // Закрываем модальное окно
         const newData = [...data];
-        newData.splice(selectedRowIndex + 1, 0, 
-            Array.from({ length: 7 }, (_, colIndex) => ({
-                id: `${selectedRowIndex}-${colIndex}`,
-                value: ''
-            }))
-        );
-        newData[selectedRowIndex + 1][0].value = newMan.rank;
-        newData[selectedRowIndex + 1][1].value = newMan.surname;
-        newData[selectedRowIndex + 1][2].value = newMan.group;
+        newData.splice(newData.length, 0, {});
+        newData[newData.length - 1].rank = newMan.rank;
+        newData[newData.length - 1].name = newMan.name;
+        newData[newData.length - 1].group = newMan.group;
+        newData[newData.length - 1].nameMedInstitution = "";
+        newData[newData.length - 1].diagnosis = "";
+        newData[newData.length - 1].date = "";
+        newData[newData.length - 1]["k/l"] = "";
         setData(newData);
     };
 
@@ -69,7 +68,7 @@ const ContextMenu = ({ x, y, selectedRowIndex, data, setData }) => {
                 <li onClick={handleInsert}>Вставить новую строку</li>
             </ul>
         </div>
-        <ChooseMan isOpen={showModal} onClose={closeModal} items={items} />
+        <ChooseMan isOpen={showModal} x={x} y={y} onClose={closeModal} items={items} />
         </>
     );
 };

@@ -84,6 +84,25 @@ app.get('/manList', (req, res) => {
 
 });
 
+app.get('/sick', (req, res) => {
+    const path = require('path');
+
+    // Путь к папке с файлами
+    const filePath = './test/больные/sick.json';
+    const data = fs.readFileSync(filePath, 'utf8'); // Читаем файл
+    let parsedData = "";
+    try {
+        parsedData = JSON.parse(data); // Парсим JSON в объект
+    } catch (error) {
+        console.error(`Ошибка при парсинге файла ${file}:`, error.message);
+    }
+    
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        parsedData,
+    });
+});
+
 app.get('/checkLogin', (req, res) => {
     res.json({ message: "Hello from the server!" });
 });

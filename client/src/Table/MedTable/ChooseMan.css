@@ -1,7 +1,5 @@
 .modal{
     position: absolute;
-    left: 50vw;
-    top: 50vh;
     border: 2px solid black;
     padding: 5px;
 }
