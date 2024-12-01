@@ -1,16 +1,31 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './ChooseMan.css';
-const ChooseMan = ({ isOpen, x, y, onClose, items }) => {
+const ChooseMan = ({x, y, items, handleCloseModal}) => {
     
     let [selectedItem, setSelectedItem] = useState(null);
     let [selectedItemInfo, setSelectedItemInfo] = useState(null);
 
-    if (!isOpen)
-        return null;
+    const modalRef = useRef(null);
+
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (!modalRef.current.contains(event.target)) {
+                handleCloseModal(null);
+            }
+        };
+
+        document.addEventListener('click', handleOutsideClick, true);
+        
+        // При размонтировании компонента удаляем слушателя события, чтобы избежать утечек памяти.
+        return () => {
+            document.removeEventListener('click', handleOutsideClick, true);
+        };
+    }, []);
+    
     const handleClickOutside = (e) => {
         // Закрываем модалку при клике вне её области
         if (e.target === e.currentTarget) {
-            onClose();
+            handleCloseModal();
         }
     };
 
@@ -29,6 +44,7 @@ const ChooseMan = ({ isOpen, x, y, onClose, items }) => {
 
     return (
         <div
+        ref={modalRef}
         className="modal" 
         onClick={handleClickOutside}
         style={{
@@ -61,7 +77,7 @@ const ChooseMan = ({ isOpen, x, y, onClose, items }) => {
                     </li>
                 </ul>
                 <button 
-                    onClick={() => onClose(selectedItemInfo)}>
+                    onClick={() => handleCloseModal(selectedItemInfo)}>
                     Выбрать
                 </button>
             </div>

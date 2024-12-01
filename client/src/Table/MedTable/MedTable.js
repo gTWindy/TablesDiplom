@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ContextMenu from './ContextMenu';
+import ChooseMan from './ChooseMan';
 import '../Table.css';
 
 // Количество столбцов в таблице.
@@ -11,6 +12,12 @@ const MedTable = () => {
     // Сохраняем индекс строки, по которой кликнули правой кнопкой
     const [selectedRowIndex, setSelectedRowIndex] = useState(null);
     const [menuPosition, setMenuPosition] = useState({ x: null, y: null });
+
+    const [isShowMenu, setShowMenu] = useState(false);
+    const [isShowModal, setShowModal] = useState(false);
+
+    // Загружаем список для выбора нового больного
+    const [loadedItems, setItems] = useState([]);
 
     useEffect(() => {
         // Функция для получения данных с сервера
@@ -35,17 +42,23 @@ const MedTable = () => {
         event.preventDefault();
         setSelectedRowIndex(-1); // -1 означает, что выбрана пустая область
         setMenuPosition({ x: event.clientX, y: event.clientY });
+        setShowMenu(true);
+        setShowModal(false);
     }
 
     function handleTableClick(event) {
         event.preventDefault();
-        setMenuPosition({ x: null, y: null });
+        // При клике вне меню или модального окна - закрываем их
+        setShowMenu(false);
     }
 
     function handleContextMenu(event, rowIndex) {
-        event.preventDefault(); // Отменяем стандартное поведение браузера (контекстное меню)
-        setSelectedRowIndex(rowIndex); // Запоминаем индекс строки
+        // Отменяем стандартное поведение браузера (контекстное меню)
+        event.preventDefault();
+        // Запоминаем индекс строки
+        setSelectedRowIndex(rowIndex);
         setMenuPosition({x: event.clientX, y: event.clientY });
+        setShowMenu(true);
       }
 
     const handleChange = (rowId, propertyName, newValue) => {
@@ -59,6 +72,50 @@ const MedTable = () => {
         });
     
         setRows(updatedRows);
+    };
+
+    // Обработка вставки новой строки
+    function handleInsert() {
+        if (selectedRowIndex === null)
+            return;
+        fetch('http://localhost:5000/manList') // Указываем URL ресурса
+        .then(response => {
+            if (!response.ok)
+                throw new Error(`Network response was not ok: ${response.status}`);
+            return response.json(); // Преобразуем ответ в JSON
+        })
+        .then(data => {
+            console.log(data); // Выводим полученные данные в консоль
+            setItems(data.mergedData);
+            setShowModal(true);
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
+    }
+
+    function handleDelete() {
+        if (selectedRowIndex !== null) {
+            const newData = [...rows];
+            newData.splice(selectedRowIndex, 1);
+            setRows(newData);
+        }
+    }
+
+    const closeModal = (newMan) => {
+        setShowModal(false); // Закрываем модальное окно
+        if(!newMan)
+            return;
+        const newData = [...rows];
+        newData.splice(newData.length, 0, {});
+        newData[newData.length - 1].rank = newMan.rank;
+        newData[newData.length - 1].name = newMan.name;
+        newData[newData.length - 1].group = newMan.group;
+        newData[newData.length - 1].nameMedInstitution = "";
+        newData[newData.length - 1].diagnosis = "";
+        newData[newData.length - 1].date = "";
+        newData[newData.length - 1]["k/l"] = "";
+        setRows(newData);
     };
 
     return (
@@ -119,13 +176,20 @@ const MedTable = () => {
                     ))}     
                 </tbody>
             </table>
-            <ContextMenu
+            {isShowMenu &&
+                <ContextMenu
                 x={menuPosition.x}
                 y={menuPosition.y}
-                selectedRowIndex={selectedRowIndex}
-                data={rows}
-                setData={setRows}
-            />
+                handleDelete={handleDelete}
+                handleInsert={handleInsert}
+            />}
+            {isShowModal && 
+            <ChooseMan
+                x={menuPosition.x}
+                y={menuPosition.y}
+                items={loadedItems}    
+                handleCloseModal={closeModal}
+            />}
       </div>
     );
 };
