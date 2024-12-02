@@ -17,7 +17,6 @@ const EditTable = () => {
 
     const handleChange = (rowId, colId, newValue) => {
         if (newValue !== "") {
-        
             const newNumber = Number(newValue);
             if (!newNumber)
                 return;

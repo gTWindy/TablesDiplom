@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { 
+    useState, 
+    useEffect,
+    useRef
+} from 'react';
 import ContextMenu from './ContextMenu';
 import ChooseMan from './ChooseMan';
 import '../Table.css';
@@ -7,6 +11,10 @@ import '../Table.css';
 const columnCount = 8;
 
 const MedTable = () => {   
+    // Ссылка на кнопку "Сохранить"
+    const buttonRef = useRef(null);
+    
+    // Строки таблицы
     const [rows, setRows] = useState([{}]);
     
     // Сохраняем индекс строки, по которой кликнули правой кнопкой
@@ -23,14 +31,14 @@ const MedTable = () => {
         // Функция для получения данных с сервера
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:5000/sick'); // Замените на ваш URL
+                const response = await fetch('http://localhost:5000/sick');
                 if (!response.ok)
                     throw new Error('Network response was not ok');
                 const result = await response.json();
                 
                 console.log(result);
                 // Установка полученных данных в состояние
-                setRows(result.parsedData.sickPeople);
+                setRows(result.parsedData);
             } catch (error) {
                 //setError(error.message); // Установка сообщения об ошибке
             }
@@ -59,7 +67,7 @@ const MedTable = () => {
         setSelectedRowIndex(rowIndex);
         setMenuPosition({x: event.clientX, y: event.clientY });
         setShowMenu(true);
-      }
+    }
 
     const handleChange = (rowId, propertyName, newValue) => {
         const updatedRows = rows.map((row, rIndex) => {
@@ -117,6 +125,26 @@ const MedTable = () => {
         newData[newData.length - 1]["k/l"] = "";
         setRows(newData);
     };
+
+    const onButtonSaveClicked = async (e) => {
+        console.log("bttn click");
+        try {
+            const response = await fetch('http://localhost:5000/sick', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              // Отправляем список больных
+              body: JSON.stringify({ rows }),
+            });
+      
+            if (!response.ok) {
+              throw new Error('Ошибка при отправке данных о больных.');
+            }
+          } catch (error) {
+            console.error('Ошибка:', error);
+          } 
+    };      
 
     return (
         <div 
@@ -176,6 +204,13 @@ const MedTable = () => {
                     ))}     
                 </tbody>
             </table>
+            <button 
+                className='med_table-button'
+                ref={buttonRef}
+                onClick={() => onButtonSaveClicked()}
+            >
+                Сохранить
+            </button>
             {isShowMenu &&
                 <ContextMenu
                 x={menuPosition.x}

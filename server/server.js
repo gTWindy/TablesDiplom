@@ -8,6 +8,9 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Путь к файлу с больными
+const filePathSick = './test/больные/sick.json';
+
 // Обработка POST-запроса
 app.post('/checkLogin', (req, res) => {
     // Доступ к данным формы
@@ -86,10 +89,7 @@ app.get('/manList', (req, res) => {
 
 app.get('/sick', (req, res) => {
     const path = require('path');
-
-    // Путь к папке с файлами
-    const filePath = './test/больные/sick.json';
-    const data = fs.readFileSync(filePath, 'utf8'); // Читаем файл
+    const data = fs.readFileSync(filePathSick, 'utf8'); // Читаем файл
     let parsedData = "";
     try {
         parsedData = JSON.parse(data); // Парсим JSON в объект
@@ -102,6 +102,16 @@ app.get('/sick', (req, res) => {
         parsedData,
     });
 });
+
+app.post('/sick', (req, res) => {
+    // Доступ к данным формы
+    const formData = req.body;
+    console.log(formData);
+    // Записываем обновленные данные обратно в файл
+    fs.writeFileSync(filePathSick, JSON.stringify(formData.rows, null, 2)); // Форматируем JSON с отступами
+        
+    console.log('Файл успешно обновлен.');
+})
 
 app.get('/checkLogin', (req, res) => {
     res.json({ message: "Hello from the server!" });

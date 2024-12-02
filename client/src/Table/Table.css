@@ -28,8 +28,10 @@
 }
 
 .table-container{
-    display: block;
-    height: 100vw;
+  display: flex;
+  height: 100vw;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .context-menu {

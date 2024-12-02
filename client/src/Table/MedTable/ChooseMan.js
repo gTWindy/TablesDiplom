@@ -60,7 +60,7 @@ const ChooseMan = ({x, y, items, handleCloseModal}) => {
                             {items['5111'].map(
                                 (item, index) => 
                                 <li>
-                                    <div className='item' onClick={(event) => onItemClick(event, '5111', index) }>{item.ФИО}</div>
+                                    <div className="choose_man-item" onClick={(event) => onItemClick(event, '5111', index) }>{item.ФИО}</div>
                                 </li>
                             )}
                         </ul>
@@ -70,7 +70,7 @@ const ChooseMan = ({x, y, items, handleCloseModal}) => {
                             {items['5112'].map(
                                     (item, index) =>
                                     <li>
-                                        <div className='item' onClick={(event) => onItemClick(event, '5112', index) }>{item.ФИО}</div>
+                                        <div className="choose_man-item" onClick={(event) => onItemClick(event, '5112', index) }>{item.ФИО}</div>
                                     </li>
                                 )}
                         </ul>
