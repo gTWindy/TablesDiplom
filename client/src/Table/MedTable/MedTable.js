@@ -6,6 +6,7 @@ import React, {
 import ContextMenu from './ContextMenu';
 import ChooseMan from './ChooseMan';
 import '../Table.css';
+import './MedTable.css';
 
 // Количество столбцов в таблице.
 const columnCount = 8;
@@ -18,7 +19,7 @@ const MedTable = () => {
     const [rows, setRows] = useState([{}]);
     
     // Сохраняем индекс строки, по которой кликнули правой кнопкой
-    const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+    const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
     const [menuPosition, setMenuPosition] = useState({ x: null, y: null });
 
     const [isShowMenu, setShowMenu] = useState(false);
@@ -46,9 +47,9 @@ const MedTable = () => {
         fetchData(); // Вызов функции получения данных
     }, []);
 
+    // Обработка вызова кастомного меню
     function handleTableContextMenu(event) {
         event.preventDefault();
-        setSelectedRowIndex(-1); // -1 означает, что выбрана пустая область
         setMenuPosition({ x: event.clientX, y: event.clientY });
         setShowMenu(true);
         setShowModal(false);
@@ -103,7 +104,7 @@ const MedTable = () => {
     }
 
     function handleDelete() {
-        if (selectedRowIndex !== null) {
+        if (selectedRowIndex !== -1) {
             const newData = [...rows];
             newData.splice(selectedRowIndex, 1);
             setRows(newData);
@@ -167,7 +168,11 @@ const MedTable = () => {
                 </thead>
                 <tbody>
                     {rows.map((row, rowIndex) => (
-                                <tr key={rowIndex} onContextMenu={(e) => handleContextMenu(e, rowIndex)}>
+                                <tr key={rowIndex}
+                                onContextMenu={(e) => handleContextMenu(e, rowIndex)}
+                                onClick={(e) => setSelectedRowIndex(rowIndex)}
+                                className={selectedRowIndex === rowIndex ? 'row-selected' : ''}
+                                >
                                     <td>{rowIndex}</td>
                                     <td>{row.rank}</td>
                                     <td>{row.name}</td>

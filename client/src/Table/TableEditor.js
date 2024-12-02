@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import './Table.css';
 
-const EditTable = () => {
+const EditTable = ({numberOfCourse}) => {
     // Инициализируем состояние для 8 строк и 10 столбцов
     const initialRows = Array.from({ length: 8 }, (_, rowIndex) => 
         Array.from({ length: 8 }, (_, colIndex) => ({
