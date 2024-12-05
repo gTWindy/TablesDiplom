@@ -3,7 +3,7 @@
     "rank": "Курсант",
     "name": "Орлов Олег Орлович",
     "group": 5111,
-    "nameMedInstitution": "Больница",
+    "medInstitution": "lazaret",
     "diagnosis": "R2131",
     "date": "13.01.2025",
     "k/l": 123
@@ -12,7 +12,6 @@
     "rank": "Рядовой",
     "name": "Иванов Иван Иванович",
     "group": "5111",
-    "nameMedInstitution": "",
     "diagnosis": "",
     "date": "555",
     "k/l": ""

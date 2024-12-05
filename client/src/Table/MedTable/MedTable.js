@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import ContextMenu from './ContextMenu';
 import ChooseMan from './ChooseMan';
+import ComboBox from '../../components/ComboBox';
 import '../Table.css';
 import './MedTable.css';
 
@@ -178,10 +179,10 @@ const MedTable = () => {
                                     <td>{row.name}</td>
                                     <td>{row.group}</td>
                                     <td>
-                                        <input className='cell-input'
-                                                type="text"
-                                                value={row.nameMedInstitution}
-                                                onChange={(e) => handleChange(rowIndex, "nameMedInstitution", e.target.value)}
+                                        <ComboBox 
+                                        selectedItem={row.medInstitution}
+                                        onChange={(newValue) => 
+                                            handleChange(rowIndex, "medInstitution", newValue?.value)}
                                         />
                                     </td>
                                     <td>
