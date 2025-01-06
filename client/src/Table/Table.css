@@ -1,8 +1,8 @@
 /* Table.css */
 
 .styled-table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .styled-table th, .styled-table td {
@@ -15,11 +15,17 @@
   background-color: #f2f2f2;
 }
 
+td {
+  width: 10vw; /* Задайте нужную ширину */
+  height: 5vw; /* Задайте нужную высоту */
+}
+
 .cell-input {
   display: block;
   border: none;
   outline: none;
   height: 100%;
+  min-width: 100%;
   padding: 0;
 }
 

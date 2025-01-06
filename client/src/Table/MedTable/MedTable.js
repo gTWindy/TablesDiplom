@@ -4,7 +4,7 @@ import React, {
     useRef
 } from 'react';
 import ContextMenu from './ContextMenu';
-import ChooseMan from './ChooseMan';
+import ChooseMan from '../../components/ChooseMan/ChooseMan';
 import ComboBox from '../../components/ComboBox';
 import '../Table.css';
 import './MedTable.css';

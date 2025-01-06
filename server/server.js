@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-
+const fs = require('fs').promises;
+const deepMerge = require('deepmerge-json');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -42,21 +42,27 @@ app.post('/checkLogin', (req, res) => {
         return res.status(401).json({ message: 'Некорректный логин или пароль.' });
 });
 
-app.get('/5kurs', (req, res) => {
-    // Чтение JSON данных из файла
-    fs.readFile('test/groups.json', 'utf8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ message: 'Ошибка чтения файла' });
-        }
+app.get('/5kurs', async (req, res) => {
+    const filesToMerge = [
+        'test/5курс/5111.json',
+        'test/5курс/5112.json',
+    ];
 
-        // Преобразуем JSON-строку в объект
-        const jsonData = JSON.parse(data);
-
-        // Отправляем JSON-ответ
-        return res.status(200).json({
-            jsonData, // Включаем пользователей из файла
-        });
+    const firstGroupJSON = await fs.readFile('./test/5курс/5111.json', 'utf8');
+    // Преобразуем JSON-строку в объект
+    const firstGroup = JSON.parse(firstGroupJSON);
+    
+    const secondGroupJSON = await fs.readFile('test/5курс/5112.json', 'utf8');
+    // Преобразуем JSON-строку в объект
+    const secondGroup = JSON.parse(secondGroupJSON);
+    //firstGroup['5112'] = secondGroup;
+    const mergedJSON = deepMerge(firstGroup, secondGroup);
+        
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        mergedJSON, // Включаем пользователей из файла
     });
+    
 });
 
 app.get('/manList', (req, res) => {
