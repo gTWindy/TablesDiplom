@@ -8,7 +8,13 @@ import EditTable from './Table/TableEditor';
 // React таблица
 import EditTable2 from './Table/TableEditor2';
 
+
+
 import MedTable from './Table/MedTable/MedTable';
+
+
+// Объект модели таблицы пятого курса 
+let tableModelFifthCourse = null;
 
 const App = () => {
     const navigate = useNavigate();
@@ -31,6 +37,7 @@ const App = () => {
                 navigate("/4kurs");
                 break;
             case "5kurs":
+                //tableModelFifthCourse = new TableEditorModel([5111, 5112, 5113, 5114, 5115]);
                 navigate("/5kurs");
                 break;
             case "lazaret":
@@ -47,7 +54,7 @@ const App = () => {
                 <Route path="/2kurs" element={<EditTable numberOfCourse={2}/>}/>
                 <Route path="/3kurs" element={<EditTable numberOfCourse={3}/>}/>
                 <Route path="/4kurs" element={<EditTable numberOfCourse={4}/>}/>
-                <Route path="/5kurs" element={<EditTable2 numbersOfGroups={[5111, 5112, 5113, 5114, 5115]}/>}/>
+                <Route path="/5kurs" element={<EditTable2/>}/>
                 <Route path="/dejfak" element={<DataTable/>}/>
                 <Route path="/lazaret" element={<MedTable/>}/>
             </Routes>

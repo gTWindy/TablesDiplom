@@ -2,119 +2,48 @@ import { useTable } from 'react-table';
 import { useState, useMemo } from 'react';
 
 import ChooseManEdit from '../components/ChooseMan/ChooseManEdit';
-
+import {TableEditorModel} from './TableEditorModel'
 import './Table.css';
 import { useEffect } from 'react';
 
-let data = [
-{
-    list: 10,
-    groupNumber: 0
-},
-{
-    list: 10,
-    groupNumber: 0
-},
-{
-    list: 10,
-    groupNumber: 0
-},
-{
-    list: 10,
-    groupNumber: 0
-},
-{
-    list: 10,
-    groupNumber: 0
-}
-];
+import {columns } from '../Table/TableEditorModel';
 
-const columns = [
-  {
-    Header: 'N п/п',
-    accessor: 'number',// accessor is the "key" in the data
-  },
-  {
-    Header: 'Подразделение',
-    accessor: 'groupNumber',// accessor is the "key" in the data
-  },
-  {
-    Header: 'По списку',
-    accessor: 'list',
-  },
-  {
-    Header: 'На лицо',
-    accessor: 'have',
-  },
-  {
-    Header: 'Наряд',
-    accessor: 'service',
-  },
-  {
-    Header: 'Лазарет',
-    accessor: 'lazaret',
-  },
-  {
-    Header: 'Госпиталь',
-    accessor: 'hospital',
-  },
-  {
-    Header: 'Командировка',
-    accessor: 'trip',
-  },
-  {
-    Header: 'Отпуск',
-    accessor: 'vacation',
-  },
-  {
-    Header: 'Увольнение',
-    accessor: 'dismissal',
-  },
-  {
-    Header: 'Прочее',
-    accessor: 'other',
-  },
-];
-
-//Список групп и людей в них
-let manList = [];
-
-const EditTable2 = ({numbersOfGroups}) => {
-    const dataWithGroups = data.map((item, index)=>{
-        item.groupNumber = numbersOfGroups[index];
-        return item;
-    })
-    // Хранение данных в состоянии
-    const [tableData, setTableData] = useState(dataWithGroups);
+const EditTable2 = () => {
+    // Создаем состояние для хранения экземпляра модели
+    const [tableModel, setTableModel] = useState(null);
     const [chooseManOpen, setChooseManOpen] = useState(false);
-
+    // Для хранения текущей ячейки
+    const [clickedCell, setClickedCell] = useState({ row: null, column: null });
+    
+    // Создаем экземпляр модели только один раз при монтировании компонента
     useEffect(() => {
-        fetch('http://localhost:5000/5kurs') // Указываем URL ресурса
-        .then(response => {
-            if (!response.ok)
-                throw new Error(`Network response was not ok: ${response.status}`);
-            return response.json(); // Преобразуем ответ в JSON
-        })
-        .then(data => {
-            console.log(data); // Выводим полученные данные в консоль
-            manList = data.mergedJSON;
-        })
-        .catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-        });
-    },[])
+        const createAndLoadModel = async () => {
+            const model = new TableEditorModel([5111, 5112, 5113, 5114, 5115]);
+            await model.loadData();
+            setTableModel(model);
+        };
 
-    const updateCellValue = async (rowIndex, columnId, newValue) => {
+        createAndLoadModel();
+    }, []);
+
+    const onCloseModal = (idesMan) => {
+        console.log(idesMan);
+        tableModel.setBusyManList(clickedCell.row, clickedCell.column, idesMan);
+        updateCellValue(clickedCell.row, clickedCell.column, idesMan.length);
+    }
+
+    const updateCellValue = (rowIndex, columnId, newValue) => {
         // Логика обработки клика и получения нового значения
         console.log(`Clicked on cell at row ${rowIndex}, column ${columnId}`);
-        
-        // Здесь вы можете выполнять асинхронную операцию, например, запрос к серверу
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Имитация задержки
-        
+        // Копируем данные
+        const updatedData = [...tableModel.data];
         // Обновление данных
-        const updatedData = [...tableData]; // Копируем данные
-        //updatedData[rowIndex][columnId] = newValue; // Обновляем конкретную ячейку
-        setTableData(updatedData); // Сохраняем обновленные данные
+        updatedData[rowIndex]['have'] = updatedData[rowIndex][columnId] ? updatedData[rowIndex]['have'] - newValue + updatedData[rowIndex][columnId] : updatedData[rowIndex]['have'] - newValue ;
+        updatedData[rowIndex][columnId] = newValue;
+        
+        tableModel.data = updatedData;
+        // Сохраняем обновленные данные
+        setTableModel(tableModel);
     };
     
     // Идентификаторы редактируемых столбцов
@@ -131,10 +60,12 @@ const EditTable2 = ({numbersOfGroups}) => {
                     <div className='cell-input'
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
-                            console.log('asdas');
+                            const newClickedCell = {
+                                row: row.index,
+                                column: id
+                            };
+                            setClickedCell(newClickedCell);
                             setChooseManOpen(true);
-                            updateCellValue();
-                            console.log(chooseManOpen);
                         }}
                     >
                         {value}
@@ -156,7 +87,7 @@ const EditTable2 = ({numbersOfGroups}) => {
         prepareRow,
     } = useTable({
         columns: memoizedColumns,
-        data: tableData,
+        data: tableModel ? tableModel.data : [],
     });
 
     return (
@@ -184,13 +115,19 @@ const EditTable2 = ({numbersOfGroups}) => {
             })}
         </tbody>
         </table>
-        <ChooseManEdit
+        {chooseManOpen &&
+            <ChooseManEdit
             x={700}
             y={500}
             isOpen={chooseManOpen}
-            items={manList['5111'] || []}    
-            handleCloseModal={() => {setChooseManOpen(false)}}
-        />
+            items={tableModel ? tableModel.getManListForChoose(clickedCell.row, clickedCell.column) : []}    
+            selectedItems = {tableModel ? tableModel.getBusyManList(clickedCell.row, clickedCell.column) : [] }
+            handleCloseModal={(ides) => {
+                setChooseManOpen(false);
+                onCloseModal(ides);
+            }}
+            />
+        }
     </>
   );
 }

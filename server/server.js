@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs').promises;
+const fs = require('fs');
 const deepMerge = require('deepmerge-json');
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,7 +43,32 @@ app.post('/checkLogin', (req, res) => {
 });
 
 app.get('/5kurs', async (req, res) => {
-    const filesToMerge = [
+    const path = require('path');
+
+    // Путь к папке с файлами
+    const filesDir = './test/5курс';
+
+    // Получаем массив имен файлов в указанной директории
+    const files = fs.readdirSync(filesDir).filter(file => path.extname(file) === '.json');
+
+    let mergedData = {};
+
+    for (const file of files) {
+        const filePath = path.join(filesDir, file);
+        const data = fs.readFileSync(filePath, 'utf8'); // Читаем файл
+        try {
+            const parsedData = JSON.parse(data); // Парсим JSON в объект
+            Object.assign(mergedData, parsedData); // Объединяем объекты
+        } catch (error) {
+            console.error(`Ошибка при парсинге файла ${file}:`, error.message);
+        }
+    }
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        mergedData,
+    });
+    
+    /*const filesToMerge = [
         'test/5курс/5111.json',
         'test/5курс/5112.json',
     ];
@@ -61,7 +86,7 @@ app.get('/5kurs', async (req, res) => {
     // Отправляем JSON-ответ
     return res.status(200).json({
         mergedJSON, // Включаем пользователей из файла
-    });
+    });*/
     
 });
 

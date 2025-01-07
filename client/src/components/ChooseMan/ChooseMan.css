@@ -9,3 +9,10 @@
     border: 1px solid black;
     padding-left: 1px;
 }
+
+.choose_man-item_selected {
+    cursor: pointer;
+    border: 1px solid black;
+    padding-left: 1px;
+    background-color: gray;
+}
