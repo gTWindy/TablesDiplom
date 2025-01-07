@@ -10,7 +10,7 @@ const ChooseManEdit = ({x, y, isOpen, items, selectedItems, handleCloseModal}) =
     }, [isOpen, ]);
 
     const onItemClick = (e, index) => {
-        if (e.currentTarget.style.backgroundColor !== 'gray') {
+        if (!selectedItemIds.includes(items[index]["Порядковый номер"])) {
             e.currentTarget.style.backgroundColor = 'gray';
             const id = items[index]['Порядковый номер'];
             // Добавляем новый ID в массив
@@ -30,22 +30,28 @@ const ChooseManEdit = ({x, y, isOpen, items, selectedItems, handleCloseModal}) =
         // Очищаем
         setSelectedItemsIds([]);
     }
-
+    const customStyles = {
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          transform: 'translate(-50%, -50%)',
+          width: '400px', // Ширина модального окна
+          height: '300px', // Высота модального окна
+        },
+    };
     return (
         <Modal
         isOpen={modalIsOpen}
         //onAfterOpen={afterOpenModal}
         onRequestClose={closeModal}
-        //style={customStyles}
+        style={customStyles}
         //contentLabel="Example Modal"
       >
             <div
             className="modal" 
-            
-            style={{
-                top: `${y}px`,
-                left: `${x}px`
-            }}
             >
                 <div className="modal-content">
                     <h2>Список</h2>

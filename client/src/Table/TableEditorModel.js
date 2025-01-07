@@ -45,6 +45,14 @@ const columns = [
   }
 ]
 
+const urls = [
+  'http://localhost:5000/1kurs',
+  'http://localhost:5000/2kurs',
+  'http://localhost:5000/3kurs',
+  'http://localhost:5000/4kurs',
+  'http://localhost:5000/5kurs',
+]
+
 // Модель данных для одной таблицы-редактор курса
 class TableEditorModel {
   // Список групп и людей в них
@@ -90,7 +98,9 @@ class TableEditorModel {
 
   loadData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/5kurs');
+      // Номер курса
+      const numberCourse = Math.floor(this.numbersOfGroups[0] / 1000);
+      const response = await fetch(urls[numberCourse - 1]);
       if (!response.ok)
         throw new Error(`Network response was not ok: ${response.status}`);
       const dataResponse = await response.json(); // Преобразуем ответ в JSON
