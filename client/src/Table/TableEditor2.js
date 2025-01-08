@@ -58,7 +58,6 @@ const EditTable2 = () => {
                 if (editableColumnIds.includes(id)) {
                     return (
                     <div className='cell-input'
-                        style={{ cursor: 'pointer' }}
                         onClick={() => {
                             const newClickedCell = {
                                 row: row.index,

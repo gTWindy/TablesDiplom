@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 
 import './Table.css';
 
-const parseData = (data) => {
-
-}
+const headers = [
+  'Порядковый номер',
+  'Воинское звание',
+  'ФИО',
+  'Дата рождения',
+  'Номер телефона',
+  'Личный номер'
+]
 
 const GroupedTable = () => {
   const [data, setData] = useState([]); // Состояние для хранения данных
@@ -15,17 +20,13 @@ const GroupedTable = () => {
     // Функция для получения данных с сервера
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/5kurs'); // Замените на ваш URL
+        const response = await fetch('http://localhost:5000/manList');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const result = await response.json();
-        console.log(1);
-        console.log(result);
-        const preparedData = parseData(result);
-
         // Установка полученных данных в состояние
-        setData(result.jsonData);
+        setData(result);
 
       } catch (error) {
         setError(error.message); // Установка сообщения об ошибке
@@ -36,10 +37,17 @@ const GroupedTable = () => {
     fetchData(); // Вызов функции получения данных
   }, []); // Пустой массив зависимостей означает, что useEffect сработает только один раз при монтировании компонента
 
-  const [openGroups, setOpenGroups] = useState({}); // состояние для отслеживания открытых групп
+  // состояние для отслеживания открытых курсов
+  const [openCourses, setOpenCourses] = useState({});
+  // состояние для отслеживания открытых групп
+  const [openGroups, setOpenGroups] = useState({});
 
-  if (loading) return <div>Загрузка...</div>; // Показываем индикатор загрузки
-  if (error) return <div>Ошибка: {error}</div>; // Показываем сообщение об ошибке
+  const toggleCourse = (course) => {
+    setOpenCourses((prev) => ({
+      ...prev,
+      [course]: !prev[course],
+    }));
+  };
 
   const toggleGroup = (group) => {
     setOpenGroups((prev) => ({
@@ -48,11 +56,14 @@ const GroupedTable = () => {
     }));
   };
 
+  if (loading) return <div>Загрузка...</div>; // Показываем индикатор загрузки
+  if (error) return <div>Ошибка: {error}</div>; // Показываем сообщение об ошибке
+
   return (
     <table className="styled-table">
       <thead>
         <tr>
-          {data.headers.map((column, index) => (
+          {headers.map((column) => (
             <React.Fragment key = {column}>
               <th>{column}</th>
             </React.Fragment>
@@ -61,24 +72,33 @@ const GroupedTable = () => {
         </tr>
       </thead>
       <tbody>
-        {data.groups.map((group, index) => (
-          <React.Fragment key={group.groupName}>
-            <tr onClick={() => toggleGroup(group.groupName)} style={{ cursor: 'pointer' }}>
-              <td colSpan={data.headers.length}>{group.groupName} {openGroups[group.groupName] ? '-' : '+'}</td>
+      {
+        Object.keys(data).map((course, index) => (
+          <React.Fragment key={course}>
+            <tr onClick={() => toggleCourse(course)}>
+              <td>{course} {openCourses[course] ? '-' : '+'}</td>
             </tr>
-            {openGroups[group.groupName] && group.members.map(member => (
-              <tr key={member["Порядковый номер"]}>
-                <td>{member["Порядковый номер"]}</td>
-                <td>{member["Воинское звание"]}</td>
-                <td>{member["ФИО"]}</td>
-                <td>{member["Дата рождения"]}</td>
-                <td>{member["Номер телефона"]}</td>
-                <td>{member["Личный номер"]}</td>
-              </tr>
+            {openCourses[course] && Object.keys(data[course]).map(group => (
+              <React.Fragment key={group}>
+                <tr onClick={() => toggleGroup(group)}>
+                  <td>{group} {openGroups[group] ? '-' : '+'}</td>
+                </tr>
+                {openGroups[group] && data[course][group].map(member => (
+                  <tr key={member["Порядковый номер"]}>
+                    <td>{member["Порядковый номер"]}</td>
+                    <td>{member["Воинское звание"]}</td>
+                    <td>{member["ФИО"]}</td>
+                    <td>{member["Дата рождения"]}</td>
+                    <td>{member["Номер телефона"]}</td>
+                    <td>{member["Личный номер"]}</td>
+                  </tr>
+                ))}
+              </React.Fragment>
             ))}
           </React.Fragment>
-        ))}
-      </tbody>
+        ))
+      }
+    </tbody>
     </table>
   );
 

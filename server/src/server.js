@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const deepMerge = require('deepmerge-json');
+
+const {getCourseList} = require('./getList')
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -42,78 +45,85 @@ app.post('/checkLogin', (req, res) => {
         return res.status(401).json({ message: 'Некорректный логин или пароль.' });
 });
 
+// Посылаем список пятого курса
 app.get('/5kurs', async (req, res) => {
-    const path = require('path');
+    // Получаем пятый курс
+    const result = getCourseList('./test/5курс');
 
-    // Путь к папке с файлами
-    const filesDir = './test/5курс';
-
-    // Получаем массив имен файлов в указанной директории
-    const files = fs.readdirSync(filesDir).filter(file => path.extname(file) === '.json');
-
-    let mergedData = {};
-
-    for (const file of files) {
-        const filePath = path.join(filesDir, file);
-        const data = fs.readFileSync(filePath, 'utf8'); // Читаем файл
-        try {
-            const parsedData = JSON.parse(data); // Парсим JSON в объект
-            Object.assign(mergedData, parsedData); // Объединяем объекты
-        } catch (error) {
-            console.error(`Ошибка при парсинге файла ${file}:`, error.message);
-        }
-    }
     // Отправляем JSON-ответ
     return res.status(200).json({
-        mergedData,
+        result
     });
-    
-    /*const filesToMerge = [
-        'test/5курс/5111.json',
-        'test/5курс/5112.json',
-    ];
-
-    const firstGroupJSON = await fs.readFile('./test/5курс/5111.json', 'utf8');
-    // Преобразуем JSON-строку в объект
-    const firstGroup = JSON.parse(firstGroupJSON);
-    
-    const secondGroupJSON = await fs.readFile('test/5курс/5112.json', 'utf8');
-    // Преобразуем JSON-строку в объект
-    const secondGroup = JSON.parse(secondGroupJSON);
-    //firstGroup['5112'] = secondGroup;
-    const mergedJSON = deepMerge(firstGroup, secondGroup);
-        
-    // Отправляем JSON-ответ
-    return res.status(200).json({
-        mergedJSON, // Включаем пользователей из файла
-    });*/
-    
 });
 
-app.get('/manList', (req, res) => {
-    const path = require('path');
+// Посылаем список четвертого курса
+app.get('/4kurs', async (req, res) => {
+    // Получаем пятый курс
+    const result = getCourseList('./test/4курс');
 
-    // Путь к папке с файлами
-    const filesDir = './test/5курс';
-
-    // Получаем массив имен файлов в указанной директории
-    const files = fs.readdirSync(filesDir).filter(file => path.extname(file) === '.json');
-
-    let mergedData = {};
-
-    for (const file of files) {
-        const filePath = path.join(filesDir, file);
-        const data = fs.readFileSync(filePath, 'utf8'); // Читаем файл
-        try {
-            const parsedData = JSON.parse(data); // Парсим JSON в объект
-            Object.assign(mergedData, parsedData); // Объединяем объекты
-        } catch (error) {
-            console.error(`Ошибка при парсинге файла ${file}:`, error.message);
-        }
-    }
     // Отправляем JSON-ответ
     return res.status(200).json({
-        mergedData,
+        result
+    });
+});
+
+// Посылаем список третьего курса
+app.get('/3kurs', async (req, res) => {
+    // Получаем пятый курс
+    const result = getCourseList('./test/3курс');
+
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        result
+    });
+});
+
+// Посылаем список второго курса
+app.get('/2kurs', async (req, res) => {
+    // Получаем пятый курс
+    const result = getCourseList('./test/2курс');
+
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        result
+    });
+});
+
+// Посылаем список первого курса
+app.get('/1kurs', async (req, res) => {
+    // Получаем пятый курс
+    const result = getCourseList('./test/1курс');
+
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        result
+    });
+});
+
+// Посылаем список для всех курсов
+app.get('/manList', (req, res) => {
+    // Получаем первый курс
+    const firstCourse = getCourseList('./test/1курс');
+
+    // Получаем второй курс
+    const secondCourse = getCourseList('./test/2курс');
+
+    // Получаем третий курс
+    const thirdCourse = getCourseList('./test/3курс');
+
+    // Получаем четвёртый курс
+    const fourthCourse = getCourseList('./test/4курс');
+
+    // Получаем пятый курс
+    const fifthCourse = getCourseList('./test/5курс');
+
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        firstCourse,
+        secondCourse,
+        thirdCourse,
+        fourthCourse,
+        fifthCourse
     });
 
 });

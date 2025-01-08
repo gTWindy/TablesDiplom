@@ -21,7 +21,9 @@ td {
 }
 
 .cell-input {
-  display: block;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
   border: none;
   outline: none;
   height: 100%;

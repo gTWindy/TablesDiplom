@@ -104,7 +104,7 @@ class TableEditorModel {
       if (!response.ok)
         throw new Error(`Network response was not ok: ${response.status}`);
       const dataResponse = await response.json(); // Преобразуем ответ в JSON
-      this.manList = dataResponse.mergedData;
+      this.manList = dataResponse.result;
     } catch(error) {
         console.error('There has been a problem with your fetch operation:', error);
     };
