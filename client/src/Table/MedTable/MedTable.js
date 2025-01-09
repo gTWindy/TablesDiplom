@@ -23,9 +23,12 @@ const courseTranslate = {
 const MedTable = () => {   
     // Строки таблицы
     const [rows, setRows] = useState([{}]);
-
-    // Сохраняем индекс строки, по которой кликнули правой кнопкой
+    // Позиция для кастомного меню
+    const [menuPosition, setMenuPosition] = useState({ x: null, y: null });
+    // Индекс строки, по которой кликнули правой кнопкой
     const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
+    // Признак наличия несохраненных изменений
+    const [needSave, setNeedSave] = useState(false);
 
     const [isShowMenu, setShowMenu] = useState(false);
     const [isShowModal, setShowModal] = useState(false);
@@ -41,12 +44,10 @@ const MedTable = () => {
                 if (!response.ok)
                     throw new Error('Network response was not ok');
                 const result = await response.json();
-                
-                console.log(result);
                 // Установка полученных данных в состояние
-                setRows(result.parsedData);
+                setRows(result);
             } catch (error) {
-                //setError(error.message); // Установка сообщения об ошибке
+                console.error(error);
             }
         };
         fetchData(); // Вызов функции получения данных
@@ -84,6 +85,7 @@ const MedTable = () => {
     // Обработка вызова кастомного меню
     function handleTableContextMenu(event) {
         event.preventDefault();
+        setMenuPosition({ x: event.clientX, y: event.clientY });
         setShowMenu(true);
         setShowModal(false);
     }
@@ -102,6 +104,7 @@ const MedTable = () => {
         setShowMenu(true);
     }
 
+    // Если пользователь что-то изменил в ячейке
     const handleChange = (rowId, propertyName, newValue) => {
         const updatedRows = rows.map((row, rIndex) => {
             if (rIndex !== rowId)
@@ -111,7 +114,7 @@ const MedTable = () => {
             row[propertyName] = newValue;
             return row;
         });
-    
+        setNeedSave(true);
         setRows(updatedRows);
     };
 
@@ -141,15 +144,19 @@ const MedTable = () => {
         newRows[newRows.length - 1].rank = newManNode.value['Воинское звание'];
         newRows[newRows.length - 1].name = newManNode.value['ФИО'];
         newRows[newRows.length - 1].group = newManNode.group;
-        newRows[newRows.length - 1].nameMedInstitution = "";
+        newRows[newRows.length - 1].medInstitution = "";
         newRows[newRows.length - 1].diagnosis = "";
-        newRows[newRows.length - 1].date = "";
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        // Берём текущую дату
+        const formattedDate = new Date().toLocaleDateString('ru-RU', options);
+        newRows[newRows.length - 1].date = formattedDate;
         newRows[newRows.length - 1]["k/l"] = "";
+        newRows[newRows.length - 1].id = newManNode.value['Личный номер'];
         setRows(newRows);
     };
 
-    const onButtonSaveClicked = async (e) => {
-        console.log("bttn click");
+    // Нажатие кнопки сохранить
+    const onButtonSaveClicked = async () => {
         try {
             const response = await fetch('http://localhost:5000/sick', {
               method: 'POST',
@@ -159,13 +166,13 @@ const MedTable = () => {
               // Отправляем список больных
               body: JSON.stringify({ rows }),
             });
-      
             if (!response.ok) {
               throw new Error('Ошибка при отправке данных о больных.');
             }
-          } catch (error) {
+            setNeedSave(false);
+        } catch (error) {
             console.error('Ошибка:', error);
-          } 
+        } 
     };      
 
     return (
@@ -232,12 +239,17 @@ const MedTable = () => {
             </table>
             <button
                 className='med_table-button'
-                onClick={() => onButtonSaveClicked()}
+                onClick={async () => {
+                    await onButtonSaveClicked();
+                }}
+                disabled={!needSave}
             >
                 Сохранить
             </button>
             {isShowMenu &&
                 <ContextMenu
+                    x={menuPosition.x}
+                    y={menuPosition.y}
                     handleDelete={handleDelete}
                     handleInsert={handleInsert}
                 />}

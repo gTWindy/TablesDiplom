@@ -25,10 +25,14 @@ const EditTable = ({numberOfCourse}) => {
         }
         
         const updatedRows = rows.map((row, rIndex) => {
-            if (rIndex !== rowId) return row; // Если строка не та, которую мы ищем, возвращаем её без изменений
+            // Если строка не та, которую мы ищем, возвращаем её без изменений
+            if (rIndex !== rowId) 
+                return row;
     
             return row.map((cell, cIndex) => {
-                if (cIndex !== colId) return cell; // Если колонка не та, которую мы ищем, возвращаем её без изменений
+                // Если колонка не та, которую мы ищем, возвращаем её без изменений
+                if (cIndex !== colId) 
+                    return cell;
     
                 return { ...cell, value: newValue }; // Обновляем значение нужной ячейки
             });

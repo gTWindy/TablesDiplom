@@ -1,30 +1,32 @@
 [
   {
     "rank": "Курсант",
-    "name": "Орлов Олег Орлович",
-    "group": 5111,
-    "medInstitution": "lazaret",
-    "diagnosis": "R2131",
-    "date": "13.01.2025",
-    "k/l": 123
-  },
-  {
-    "rank": "Курсант",
-    "name": "Иванов Иван Иванович",
-    "group": "5111",
-    "diagnosis": "",
-    "date": "555",
-    "k/l": "",
+    "name": "Ивановкин Иван Иванович",
+    "group": "5113",
+    "diagnosis": "5555",
+    "date": "5",
+    "k/l": "564",
+    "id": "РА-163456789",
     "medInstitution": "hospital"
   },
   {
     "rank": "Курсант",
-    "name": "Белова Белла Беловна",
-    "group": "4111",
-    "nameMedInstitution": "",
+    "name": "Алексей Алексеевич Алексеев",
+    "group": "3111",
     "diagnosis": "",
     "date": "",
     "k/l": "",
+    "id": "РА-864000071",
+    "medInstitution": "hospital"
+  },
+  {
+    "rank": "Курсант",
+    "name": "Кузнецов Григорий Кузьмич",
+    "group": "5112",
+    "diagnosis": "",
+    "date": "",
+    "k/l": "",
+    "id": "РА-163459012",
     "medInstitution": "hospital"
   }
 ]

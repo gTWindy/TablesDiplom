@@ -96,34 +96,36 @@ class TableEditorModel {
     }
   };
 
+  // Загружаем данные с сервера
   loadData = async () => {
+    // Номер курса
+    const numberCourse = Math.floor(this.numbersOfGroups[0] / 1000);
     try {
-      // Номер курса
-      const numberCourse = Math.floor(this.numbersOfGroups[0] / 1000);
-      const response = await fetch(urls[numberCourse - 1]);
+      const response = await fetch(`http://localhost:5000/manList?course=${numberCourse}`);
       if (!response.ok)
         throw new Error(`Network response was not ok: ${response.status}`);
-      const dataResponse = await response.json(); // Преобразуем ответ в JSON
-      this.manList = dataResponse.result;
-    } catch(error) {
-        console.error('There has been a problem with your fetch operation:', error);
+      this.manList = await response.json();
+    } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
     };
 
     try {
-      const response = await fetch('http://localhost:5000/sick');
+      const response = await fetch(`http://localhost:5000/sick?course=${numberCourse}`);
       if (!response.ok)
         throw new Error('Network response was not ok');
-      const result = await response.json();
-      
-      console.log(result);
-      // Установка полученных данных
-      this.sicks = (result.parsedData);
-  } catch (error) {
-      //setError(error.message); // Установка сообщения об ошибке
-  }
-
+      this.sicks = await response.json();
+      this.data.forEach(row => {
+        row.hospital += this.sicks[row.groupNumber]?.hospital?.length || 0;
+        row.have -= row.hospital;
+        row.lazaret += this.sicks[row.groupNumber]?.lazaret?.length || 0;
+        row.have -= row.lazaret;
+      });
+    } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+    };
   }
   
+  // Устанавливаем
   setBusyManList = (row, columnName, ides) => {
     this.manListBusy[row].columns[columnName] = ides;
   }

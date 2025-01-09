@@ -45,6 +45,7 @@ app.post('/checkLogin', (req, res) => {
         return res.status(401).json({ message: 'Некорректный логин или пароль.' });
 });
 
+/*
 // Посылаем список пятого курса
 app.get('/5kurs', async (req, res) => {
     // Получаем пятый курс
@@ -98,60 +99,102 @@ app.get('/1kurs', async (req, res) => {
     return res.status(200).json({
         result
     });
-});
+});*/
 
 // Посылаем список для всех курсов
 app.get('/manList', (req, res) => {
-    // Получаем первый курс
-    const firstCourse = getCourseList('./test/1курс');
+    // Извлекаем параметр курс из запроса
+    const course = req.query.course;
+    if (course) {
+        let groupList = null;
+        switch(Number(course)) {
+            case 1:
+                groupList = getCourseList('./test/1курс');
+                break;
+            case 2:
+                groupList = getCourseList('./test/2курс');
+                break;
+            case 3:
+                groupList = getCourseList('./test/3курс');
+                break;
+            case 4:
+                groupList = getCourseList('./test/4курс');
+                break;
+            case 5:
+                groupList = getCourseList('./test/5курс');
+                break;
+            default:
+                return res.status(404);
+        }
+        // Отправляем JSON-ответ
+        return res.status(200).json({...groupList});
+    }
+    else {
+        // Получаем первый курс
+        const firstCourse = getCourseList('./test/1курс');
 
-    // Получаем второй курс
-    const secondCourse = getCourseList('./test/2курс');
+        // Получаем второй курс
+        const secondCourse = getCourseList('./test/2курс');
 
-    // Получаем третий курс
-    const thirdCourse = getCourseList('./test/3курс');
+        // Получаем третий курс
+        const thirdCourse = getCourseList('./test/3курс');
 
-    // Получаем четвёртый курс
-    const fourthCourse = getCourseList('./test/4курс');
+        // Получаем четвёртый курс
+        const fourthCourse = getCourseList('./test/4курс');
 
-    // Получаем пятый курс
-    const fifthCourse = getCourseList('./test/5курс');
+        // Получаем пятый курс
+        const fifthCourse = getCourseList('./test/5курс');
 
-    // Отправляем JSON-ответ
-    return res.status(200).json({
-        firstCourse,
-        secondCourse,
-        thirdCourse,
-        fourthCourse,
-        fifthCourse
-    });
-
+        // Отправляем JSON-ответ
+        return res.status(200).json({
+            firstCourse,
+            secondCourse,
+            thirdCourse,
+            fourthCourse,
+            fifthCourse
+        });
+    }
 });
 
+// Маршрут для обработки GET-запросов к /getSick
 app.get('/sick', (req, res) => {
-    const path = require('path');
-    const data = fs.readFileSync(filePathSick, 'utf8'); // Читаем файл
-    let parsedData = "";
+    // Читаем файл
+    const data = fs.readFileSync(filePathSick, 'utf8');
+    let parsedData = null;
     try {
         parsedData = JSON.parse(data); // Парсим JSON в объект
     } catch (error) {
         console.error(`Ошибка при парсинге файла ${file}:`, error.message);
     }
     
+    // Извлекаем параметр курс из запроса
+    const course = req.query.course;
+    if (course) {
+        const oldParsedData = parsedData;
+        parsedData = {};
+        oldParsedData.forEach(sick => {
+            if (!parsedData[sick.group])
+                parsedData[sick.group] = {};
+            if (!parsedData[sick.group][sick.medInstitution])
+                parsedData[sick.group][sick.medInstitution] = [];
+            parsedData[sick.group][sick.medInstitution].push(sick);
+        });         
+    }
     // Отправляем JSON-ответ
-    return res.status(200).json({
-        parsedData,
-    });
+    return res.status(200).json(
+        [...parsedData]
+    );
 });
 
 app.post('/sick', (req, res) => {
     // Доступ к данным формы
     const formData = req.body;
-    console.log(formData);
     // Записываем обновленные данные обратно в файл
     fs.writeFileSync(filePathSick, JSON.stringify(formData.rows, null, 2)); // Форматируем JSON с отступами
         
     console.log('Файл успешно обновлен.');
+    // Отправляем JSON-ответ
+    return res.status(200).json();
 })
 
 app.get('/checkLogin', (req, res) => {
