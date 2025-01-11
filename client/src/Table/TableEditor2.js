@@ -46,6 +46,29 @@ const EditTable2 = () => {
         setTableModel(tableModel);
     };
     
+    // Нажатие кнопки сохранить
+    const onButtonSaveClicked = async () => {
+        try {
+            const response = await fetch('http://localhost:5000/busyList', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              // Отправляем список больных
+              body: JSON.stringify({
+                people: tableModel.getBusyManList(),
+                numberOfCourse: tableModel.numberOfCourse
+            }),
+            });
+            if (!response.ok) {
+              throw new Error('Ошибка при отправке данных занятых.');
+            }
+            //setNeedSave(false);
+        } catch (error) {
+            console.error('Ошибка:', error);
+        } 
+    };   
+
     // Идентификаторы редактируемых столбцов
     const editableColumnIds = ['service', 'trip', 'vacation', 'dismissal', 'other'];
 
@@ -114,6 +137,11 @@ const EditTable2 = () => {
             })}
         </tbody>
         </table>
+        <button
+            onClick={() => onButtonSaveClicked()}
+        >
+            Утвердить
+        </button>
         {chooseManOpen &&
             <ChooseManEdit
             x={700}

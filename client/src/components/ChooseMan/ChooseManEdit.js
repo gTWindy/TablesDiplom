@@ -10,9 +10,9 @@ const ChooseManEdit = ({x, y, isOpen, items, selectedItems, handleCloseModal}) =
     }, [isOpen, ]);
 
     const onItemClick = (e, index) => {
-        if (!selectedItemIds.includes(items[index]["Порядковый номер"])) {
+        if (!selectedItemIds.includes(items[index]["Личный номер"])) {
             e.currentTarget.style.backgroundColor = 'gray';
-            const id = items[index]['Порядковый номер'];
+            const id = items[index]['Личный номер'];
             // Добавляем новый ID в массив
             selectedItemIds = [...selectedItemIds, id];
             // Обновляем состояние
@@ -20,7 +20,7 @@ const ChooseManEdit = ({x, y, isOpen, items, selectedItems, handleCloseModal}) =
         }
         else {
             e.currentTarget.style.backgroundColor = 'white';
-            setSelectedItemsIds(selectedItemIds.filter(item => item !== items[index]['Порядковый номер']));
+            setSelectedItemsIds(selectedItemIds.filter(item => item !== items[index]['Личный номер']));
         }
         
     }
@@ -60,7 +60,7 @@ const ChooseManEdit = ({x, y, isOpen, items, selectedItems, handleCloseModal}) =
                             <ul>
                                 {items.map(
                                         (item, index) =>
-                                            selectedItemIds.includes(item["Порядковый номер"]) ?
+                                            selectedItemIds.includes(item["Личный номер"]) ?
                                             <li>
                                                 <div className="choose_man-item_selected" onClick={(event) => onItemClick(event, index) }>{item.ФИО}</div>
                                             </li>

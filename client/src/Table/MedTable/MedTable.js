@@ -151,7 +151,7 @@ const MedTable = () => {
         const formattedDate = new Date().toLocaleDateString('ru-RU', options);
         newRows[newRows.length - 1].date = formattedDate;
         newRows[newRows.length - 1]["k/l"] = "";
-        newRows[newRows.length - 1].id = newManNode.value['Личный номер'];
+        newRows[newRows.length - 1]['Личный номер'] = newManNode.value['Личный номер'];
         setRows(newRows);
     };
 

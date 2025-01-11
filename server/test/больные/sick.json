@@ -3,30 +3,30 @@
     "rank": "Курсант",
     "name": "Ивановкин Иван Иванович",
     "group": "5113",
-    "diagnosis": "5555",
-    "date": "5",
-    "k/l": "564",
-    "id": "РА-163456789",
-    "medInstitution": "hospital"
-  },
-  {
-    "rank": "Курсант",
-    "name": "Алексей Алексеевич Алексеев",
-    "group": "3111",
+    "medInstitution": "hospital",
     "diagnosis": "",
-    "date": "",
-    "k/l": "",
-    "id": "РА-864000071",
-    "medInstitution": "hospital"
+    "date": "11.01.2025",
+    "k/l": "123",
+    "Личный номер": "РА-163456789"
   },
   {
     "rank": "Курсант",
-    "name": "Кузнецов Григорий Кузьмич",
+    "name": "Метров Петр Петрович",
     "group": "5112",
-    "diagnosis": "",
-    "date": "",
-    "k/l": "",
-    "id": "РА-163459012",
-    "medInstitution": "hospital"
+    "medInstitution": "lazaret",
+    "diagnosis": "123123",
+    "date": "11.01.2025",
+    "k/l": "123",
+    "Личный номер": "РА-162457890"
+  },
+  {
+    "rank": "Курсант",
+    "name": "Сидоркина Анна Ивановна",
+    "group": "5113",
+    "medInstitution": "hospital",
+    "diagnosis": "123123",
+    "date": "11.01.2025",
+    "k/l": "4123",
+    "Личный номер": "РА-183456791"
   }
 ]

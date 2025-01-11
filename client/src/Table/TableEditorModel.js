@@ -57,17 +57,18 @@ const urls = [
 class TableEditorModel {
   // Список групп и людей в них
   manList = [];
-  // Список людей по группам, которые выбраны
+  // Список людей по группам, которые уже заняты (болеют, в наряде и т.д.)
   manListBusy = [];
   // Список групп
   numbersOfGroups = [];
-  // Список больных по группам
-  sicks = [];
+  // Номер курса
+  numberOfCourse = -1;
   // Данные самой таблицы
   data = [];
 
   constructor(numbersOfGroup) {
     this.numbersOfGroups = numbersOfGroup;
+    this.numberOfCourse = Math.floor(this.numbersOfGroups[0] / 1000);
     for (let i = 0; i < numbersOfGroup.length; ++i) {
       this.data.push({
         list: 10,
@@ -98,10 +99,8 @@ class TableEditorModel {
 
   // Загружаем данные с сервера
   loadData = async () => {
-    // Номер курса
-    const numberCourse = Math.floor(this.numbersOfGroups[0] / 1000);
     try {
-      const response = await fetch(`http://localhost:5000/manList?course=${numberCourse}`);
+      const response = await fetch(`http://localhost:5000/manList?course=${this.numberOfCourse}`);
       if (!response.ok)
         throw new Error(`Network response was not ok: ${response.status}`);
       this.manList = await response.json();
@@ -110,16 +109,21 @@ class TableEditorModel {
     };
 
     try {
-      const response = await fetch(`http://localhost:5000/sick?course=${numberCourse}`);
+      const response = await fetch(`http://localhost:5000/sick?course=${this.numberOfCourse}`);
       if (!response.ok)
         throw new Error('Network response was not ok');
-      this.sicks = await response.json();
-      this.data.forEach(row => {
-        row.hospital += this.sicks[row.groupNumber]?.hospital?.length || 0;
-        row.have -= row.hospital;
-        row.lazaret += this.sicks[row.groupNumber]?.lazaret?.length || 0;
-        row.have -= row.lazaret;
-      });
+      const sicks = await response.json();
+      
+      for (let i = 0; i < this.data.length; ++i) {
+        const groupNumber = this.data[i].groupNumber;
+        
+        this.data[i].hospital += sicks[groupNumber]?.hospital?.length || 0;
+        this.manListBusy[i].columns.hospital.push(...(sicks[groupNumber]?.hospital?.map(sick => sick['Личный номер']) || []))
+        this.data[i].have -= this.data[i].hospital;
+        this.data[i].lazaret += sicks[groupNumber]?.lazaret?.length || 0;
+        this.manListBusy[i].columns.lazaret.push(...(sicks[groupNumber]?.lazaret?.map(sick => sick['Личный номер']) || []))
+        this.data[i].have -= this.data[i].lazaret;
+      }
     } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
     };
@@ -130,7 +134,10 @@ class TableEditorModel {
     this.manListBusy[row].columns[columnName] = ides;
   }
 
-  getBusyManList = (row, columnName) => {
+  // Получаем список занятых людей
+  getBusyManList = (row = -1, columnName) => {
+    if (row === -1)
+      return this.manListBusy;
     return this.manListBusy[row].columns[columnName];
   }
 
@@ -145,9 +152,10 @@ class TableEditorModel {
     // Объединяем все оставшиеся массивы в один
     busyPeople.push(Object.values(columnsCopy).flat());
     busyPeople = busyPeople.flat();
-
+    // Номер группы
     const groupName = this.numbersOfGroups[row];
-    return this.manList[groupName].filter(person => !busyPeople.includes(person['Порядковый номер']));
+    
+    return this.manList[groupName].filter(person => !busyPeople.includes(person['Личный номер']));
   }
 
 }

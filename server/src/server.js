@@ -45,63 +45,7 @@ app.post('/checkLogin', (req, res) => {
         return res.status(401).json({ message: 'Некорректный логин или пароль.' });
 });
 
-/*
-// Посылаем список пятого курса
-app.get('/5kurs', async (req, res) => {
-    // Получаем пятый курс
-    const result = getCourseList('./test/5курс');
-
-    // Отправляем JSON-ответ
-    return res.status(200).json({
-        result
-    });
-});
-
-// Посылаем список четвертого курса
-app.get('/4kurs', async (req, res) => {
-    // Получаем пятый курс
-    const result = getCourseList('./test/4курс');
-
-    // Отправляем JSON-ответ
-    return res.status(200).json({
-        result
-    });
-});
-
-// Посылаем список третьего курса
-app.get('/3kurs', async (req, res) => {
-    // Получаем пятый курс
-    const result = getCourseList('./test/3курс');
-
-    // Отправляем JSON-ответ
-    return res.status(200).json({
-        result
-    });
-});
-
-// Посылаем список второго курса
-app.get('/2kurs', async (req, res) => {
-    // Получаем пятый курс
-    const result = getCourseList('./test/2курс');
-
-    // Отправляем JSON-ответ
-    return res.status(200).json({
-        result
-    });
-});
-
-// Посылаем список первого курса
-app.get('/1kurs', async (req, res) => {
-    // Получаем пятый курс
-    const result = getCourseList('./test/1курс');
-
-    // Отправляем JSON-ответ
-    return res.status(200).json({
-        result
-    });
-});*/
-
-// Посылаем список для всех курсов
+// Посылаем список для одного курса или для всех курсов
 app.get('/manList', (req, res) => {
     // Извлекаем параметр курс из запроса
     const course = req.query.course;
@@ -156,7 +100,21 @@ app.get('/manList', (req, res) => {
     }
 });
 
-// Маршрут для обработки GET-запросов к /getSick
+app.post('/busyList', (req, res) => {
+    // Доступ к данным формы
+    const formData = req.body;
+
+    // Номер курса
+    const numberOfCourse = formData.numberOfCourse;
+
+    const filePathBusy = `./test/${numberOfCourse}курс/busyPeople.json`;
+
+    // Записываем обновленные данные в файл
+    fs.writeFileSync(filePathBusy, JSON.stringify(formData.people, null, 2)); // Форматируем JSON с отступами
+    return res.status(200);
+})
+
+// Получаем список больных
 app.get('/sick', (req, res) => {
     // Читаем файл
     const data = fs.readFileSync(filePathSick, 'utf8');
@@ -179,13 +137,19 @@ app.get('/sick', (req, res) => {
                 parsedData[sick.group][sick.medInstitution] = [];
             parsedData[sick.group][sick.medInstitution].push(sick);
         });         
+        // Отправляем JSON-ответ как объект
+        return res.status(200).json(
+            {...parsedData}
+        );
     }
-    // Отправляем JSON-ответ
+    // Отправляем JSON-ответ как массив
     return res.status(200).json(
         [...parsedData]
     );
+    
 });
 
+// Запоминаем список больных
 app.post('/sick', (req, res) => {
     // Доступ к данным формы
     const formData = req.body;
