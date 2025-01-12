@@ -2,7 +2,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 
 import Login from './Login';
 
-import DataTable from './Table/Table';
+import GeneralTable from './Table/GeneralTable';
 // Моя собственная таблица
 import EditTable from './Table/TableEditor';
 // React таблица
@@ -50,12 +50,12 @@ const App = () => {
         <>
             <Routes>
                 <Route path="/" element={<Login onAuthenticate={onAuthenticate}/>}/>
-                <Route path="/1kurs" element={<EditTable numberOfCourse={1}/>}/>
-                <Route path="/2kurs" element={<EditTable numberOfCourse={2}/>}/>
-                <Route path="/3kurs" element={<EditTable numberOfCourse={3}/>}/>
-                <Route path="/4kurs" element={<EditTable numberOfCourse={4}/>}/>
-                <Route path="/5kurs" element={<EditTable2/>}/>
-                <Route path="/dejfak" element={<DataTable/>}/>
+                <Route path="/1kurs" element={<EditTable2 groups={[1111, 1112, 1113, 1114, 1115]}/>}/>
+                <Route path="/2kurs" element={<EditTable2 groups={[2111, 2112, 2113, 2114, 2115]}/>}/>
+                <Route path="/3kurs" element={<EditTable2 groups={[3111, 3112, 3113, 3114, 3115]}/>}/>
+                <Route path="/4kurs" element={<EditTable2 groups={[4111, 4112, 4113, 4114, 4115]}/>}/>
+                <Route path="/5kurs" element={<EditTable2 groups={[5111, 5112, 5113, 5114, 5115]}/>}/>
+                <Route path="/dejfak" element={<GeneralTable/>}/>
                 <Route path="/lazaret" element={<MedTable/>}/>
             </Routes>
         </>

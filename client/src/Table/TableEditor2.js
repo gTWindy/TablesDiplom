@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 import {columns } from '../Table/TableEditorModel';
 
-const EditTable2 = () => {
+const EditTable2 = ({groups}) => {
     // Создаем состояние для хранения экземпляра модели
     const [tableModel, setTableModel] = useState(null);
     const [chooseManOpen, setChooseManOpen] = useState(false);
@@ -18,7 +18,7 @@ const EditTable2 = () => {
     // Создаем экземпляр модели только один раз при монтировании компонента
     useEffect(() => {
         const createAndLoadModel = async () => {
-            const model = new TableEditorModel([5111, 5112, 5113, 5114, 5115]);
+            const model = new TableEditorModel(groups);
             await model.loadData();
             setTableModel(model);
         };

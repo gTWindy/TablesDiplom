@@ -3,7 +3,10 @@ const cors = require('cors');
 const fs = require('fs');
 const deepMerge = require('deepmerge-json');
 
-const {getCourseList} = require('./getList')
+const {
+    getCourseList,
+    getBusyList
+} = require('./getList')
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -112,6 +115,25 @@ app.post('/busyList', (req, res) => {
     // Записываем обновленные данные в файл
     fs.writeFileSync(filePathBusy, JSON.stringify(formData.people, null, 2)); // Форматируем JSON с отступами
     return res.status(200);
+})
+
+app.get('/busyList', (req, res) => {
+    // Доступ к данным формы
+    const formData = req.body;
+
+    const firstCourse = getBusyList('./test/1курс/busyList.json');
+    const secondCourse = getBusyList('./test/2курс/busyList.json');
+    const thirdCourse = getBusyList('./test/3курс/busyList.json');
+    const fourthCourse = getBusyList('./test/4курс/busyList.json');
+    const fifthCourse = getBusyList('./test/5курс/busyList.json');
+
+    return res.status(200).json({
+        '1курс': firstCourse,
+        '2курс': secondCourse,
+        '3курс': thirdCourse,
+        '4курс': fourthCourse,
+        '5курс': fifthCourse
+    });
 })
 
 // Получаем список больных

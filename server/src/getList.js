@@ -25,3 +25,29 @@ module.exports.getCourseList = function(filesDir) {
 
     return mergedData;
 }
+
+module.exports.getBusyList = function (filePath) {
+    // Читаем файл
+    const data = fs.readFileSync(filePath, 'utf8');
+    let parsedData = null;
+    try {
+        parsedData = JSON.parse(data); // Парсим JSON в объект
+    }
+    catch (error) {
+        console.log(error);
+        return {};
+    }
+    return parsedData.reduce((accumulator, currentValue, index, array) => {
+        for (const key in currentValue.columns)
+            accumulator[key].push(...currentValue.columns[key]);
+        return accumulator;
+    }, {
+        service: [],
+        lazaret: [],
+        hospital: [],
+        trip: [],
+        vacation: [],
+        dismissal: [],
+        other: []
+    });
+}
