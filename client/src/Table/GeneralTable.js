@@ -49,21 +49,42 @@ const columns = [
     }
 ];
 
+
+
 const GeneralTable = () => {
 
-    useEffect(() => {
-        const createAndLoadModel = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/busyList`);
-                if (!response.ok)
-                  throw new Error(`Network response was not ok: ${response.status}`);
-                const busyPeople = await response.json();
-            } catch (error) {
-                console.error('There has been a problem with your fetch operation:', error);
-            };
-        };
+  const [data, setData] = useState([]);
 
-        createAndLoadModel();
+  useEffect(() => {
+      const createAndLoadModel = async () => {
+        try {
+          const response = await fetch(`http://localhost:5000/busyList`);
+          if (!response.ok)
+            throw new Error(`Network response was not ok: ${response.status}`);
+          const loadedData = await response.json();
+          let newData = [];
+          for (let i = 0; i < loadedData.length; ++i) {
+            newData.push({
+              course: i+1,
+              list: 100,
+              have: 100 - (loadedData[i].service.length + loadedData[i].lazaret.length + loadedData[i].hospital.length + 
+                loadedData[i].trip.length + loadedData[i].vacation.length + loadedData[i].dismissal.length + loadedData[i].other.length),
+              service: loadedData[i].service.length,
+              lazaret: loadedData[i].lazaret.length,
+              hospital: loadedData[i].hospital.length,
+              trip: loadedData[i].trip.length,
+              vacation: loadedData[i].vacation.length,
+              dismissal: loadedData[i].dismissal.length,
+              other: loadedData[i].other.length
+            })
+          }
+          setData(newData);
+        } catch (error) {
+          console.error('There has been a problem with your fetch operation:', error);
+        };
+      };
+
+      createAndLoadModel();
     }, [])
 
     const {
@@ -74,14 +95,7 @@ const GeneralTable = () => {
         prepareRow,
     } = useTable({
         columns: columns,
-        data: [
-            {
-                course: 1,
-                list: 100,
-                have: 100,
-                service: 0,
-            }
-        ],
+        data: data,
     });
 
     return (

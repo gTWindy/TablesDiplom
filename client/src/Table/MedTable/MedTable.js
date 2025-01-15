@@ -1,7 +1,6 @@
 import React, { 
     useState, 
-    useEffect,
-    useRef
+    useEffect
 } from 'react';
 import ContextMenu from './ContextMenu';
 import ChooseMan from '../../components/ChooseMan/ChooseMan';
@@ -9,15 +8,12 @@ import ComboBox from '../../components/ComboBox';
 import '../Table.css';
 import './MedTable.css';
 
-// Количество столбцов в таблице.
-const columnCount = 8;
-
 const courseTranslate = {
     firstCourse: "Первый курс",
     secondCourse: "Второй курс",
     thirdCourse: "Третий курс",
     fourthCourse: "Четвёртый курс",
-    fifthCourse: "Пяятый курс",
+    fifthCourse: "Пятый курс",
 }
 
 const MedTable = () => {   
@@ -52,11 +48,13 @@ const MedTable = () => {
         };
         fetchData(); // Вызов функции получения данных
         
+        // Загружаем список всех курсантов, для возможности выбора нового больного
         fetch('http://localhost:5000/manList')
         .then(response => {
             if (!response.ok)
                 throw new Error(`Network response was not ok: ${response.status}`);
-            return response.json(); // Преобразуем ответ в JSON
+            // Преобразуем ответ в JSON
+            return response.json();
         })
         .then(data => {
             let newData = Object.keys(data).map(course => ({ 
@@ -184,14 +182,14 @@ const MedTable = () => {
             <table className="styled-table">
                 <thead>
                     <tr>
-                        <th>N п/п</th>
+                        <th>№ п/п</th>
                         <th>Воинское звание</th>
                         <th>ФИО</th>
                         <th>Состав подразделения</th>
                         <th>Название лечебного учреждения</th>
                         <th>Диагноз</th>
                         <th>Дата госпитализации</th>
-                        <th>К/л</th>
+                        <th>К/д</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -201,7 +199,7 @@ const MedTable = () => {
                                 onClick={(e) => setSelectedRowIndex(rowIndex)}
                                 className={selectedRowIndex === rowIndex ? 'row-selected' : ''}
                                 >
-                                    <td>{rowIndex}</td>
+                                    <td>{rowIndex + 1}</td>
                                     <td>{row.rank}</td>
                                     <td>{row.name}</td>
                                     <td>{row.group}</td>

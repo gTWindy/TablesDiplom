@@ -56,19 +56,19 @@ app.get('/manList', (req, res) => {
         let groupList = null;
         switch(Number(course)) {
             case 1:
-                groupList = getCourseList('./test/1курс');
+                groupList = getCourseList('./test/1курс/группы/');
                 break;
             case 2:
-                groupList = getCourseList('./test/2курс');
+                groupList = getCourseList('./test/2курс/группы/');
                 break;
             case 3:
-                groupList = getCourseList('./test/3курс');
+                groupList = getCourseList('./test/3курс/группы/');
                 break;
             case 4:
-                groupList = getCourseList('./test/4курс');
+                groupList = getCourseList('./test/4курс/группы/');
                 break;
             case 5:
-                groupList = getCourseList('./test/5курс');
+                groupList = getCourseList('./test/5курс/группы/');
                 break;
             default:
                 return res.status(404);
@@ -78,19 +78,19 @@ app.get('/manList', (req, res) => {
     }
     else {
         // Получаем первый курс
-        const firstCourse = getCourseList('./test/1курс');
+        const firstCourse = getCourseList('./test/1курс/группы/');
 
         // Получаем второй курс
-        const secondCourse = getCourseList('./test/2курс');
+        const secondCourse = getCourseList('./test/2курс/группы/');
 
         // Получаем третий курс
-        const thirdCourse = getCourseList('./test/3курс');
+        const thirdCourse = getCourseList('./test/3курс/группы/');
 
         // Получаем четвёртый курс
-        const fourthCourse = getCourseList('./test/4курс');
+        const fourthCourse = getCourseList('./test/4курс/группы/');
 
         // Получаем пятый курс
-        const fifthCourse = getCourseList('./test/5курс');
+        const fifthCourse = getCourseList('./test/5курс/группы/');
 
         // Отправляем JSON-ответ
         return res.status(200).json({
@@ -127,13 +127,13 @@ app.get('/busyList', (req, res) => {
     const fourthCourse = getBusyList('./test/4курс/busyList.json');
     const fifthCourse = getBusyList('./test/5курс/busyList.json');
 
-    return res.status(200).json({
-        '1курс': firstCourse,
-        '2курс': secondCourse,
-        '3курс': thirdCourse,
-        '4курс': fourthCourse,
-        '5курс': fifthCourse
-    });
+    return res.status(200).json([
+        {...firstCourse},
+        {...secondCourse},
+        {...thirdCourse},
+        {...fourthCourse},
+        {...fifthCourse}
+    ]);
 })
 
 // Получаем список больных

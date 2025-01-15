@@ -6,7 +6,8 @@ import {TableEditorModel} from './TableEditorModel'
 import './Table.css';
 import { useEffect } from 'react';
 
-import {columns } from '../Table/TableEditorModel';
+import { columns } from '../Table/TableEditorModel';
+import PeopleList from '../components/PeopleList';
 
 const EditTable2 = ({groups}) => {
     // Создаем состояние для хранения экземпляра модели
@@ -101,6 +102,7 @@ const EditTable2 = ({groups}) => {
             })),
             []
     );
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -114,6 +116,9 @@ const EditTable2 = ({groups}) => {
 
     return (
     <>
+        <div>
+            <span>Развернутая Строевая записка</span>
+        </div>
         <table {...getTableProps()}  className="styled-table">
         <thead>
             {headerGroups.map((headerGroup) => (
@@ -137,24 +142,29 @@ const EditTable2 = ({groups}) => {
             })}
         </tbody>
         </table>
+        <div>
+        <span>Дежурный</span>
         <button
             onClick={() => onButtonSaveClicked()}
         >
             Утвердить
         </button>
-        {chooseManOpen &&
-            <ChooseManEdit
-            x={700}
-            y={500}
-            isOpen={chooseManOpen}
-            items={tableModel ? tableModel.getManListForChoose(clickedCell.row, clickedCell.column) : []}    
-            selectedItems = {tableModel ? tableModel.getBusyManList(clickedCell.row, clickedCell.column) : [] }
-            handleCloseModal={(ides) => {
-                setChooseManOpen(false);
-                onCloseModal(ides);
-            }}
-            />
-        }
+        </div>
+            <PeopleList peopleList={tableModel?.getBusyManListForTable() || []}>
+            </PeopleList>
+            {chooseManOpen &&
+                <ChooseManEdit
+                    x={700}
+                    y={500}
+                    isOpen={chooseManOpen}
+                    items={tableModel ? tableModel.getManListForChoose(clickedCell.row, clickedCell.column) : []}
+                    selectedItems={tableModel ? tableModel.getBusyManList(clickedCell.row, clickedCell.column) : []}
+                    handleCloseModal={(ides) => {
+                        setChooseManOpen(false);
+                        onCloseModal(ides);
+                    }}
+                />
+            }
     </>
   );
 }

@@ -141,6 +141,32 @@ class TableEditorModel {
     return this.manListBusy[row].columns[columnName];
   }
 
+  // Получаем список занятых людей для представления в таблице
+  getBusyManListForTable = () => {
+    let result = [];
+    // Порядковый номер.
+    let i = 1;
+    for (let group of this.manListBusy) {
+      for (let columnName of Object.keys(group.columns)) {
+        for (let id of group.columns[columnName]) {
+          const busyMan = this.manList[group.groupNumber].find((man) => {
+            return man['Личный номер'] === id;
+          });
+          result.push({
+            number: i,
+            course: this.numberOfCourse,
+            rank: busyMan['Воинское звание'],
+            name: busyMan['ФИО'],
+            reason: columnName,
+            remark: 'пока пусто',
+          });
+          ++i;
+        }
+      }
+    }
+    return result;
+  }
+
   // Возвращаем список людей выбранной группы, которые не заняты
   getManListForChoose = (row, columnName) => {
     if (row === null)
