@@ -5,6 +5,7 @@ import ChooseManEdit from '../components/ChooseMan/ChooseManEdit';
 import {TableEditorModel} from './TableEditorModel'
 import './Table.css';
 import { useEffect } from 'react';
+import PeopleList from '../components/PeopleList';
 
 const columns = [
     {
@@ -100,6 +101,9 @@ const GeneralTable = () => {
 
     return (
         <>
+            <div className='table_header'>
+                <h4>РАЗВЕРНУТАЯ СТРОЕВАЯ ЗАПИСКА<br/> на </h4>
+            </div>
             <table {...getTableProps()}  className="styled-table">
             <thead>
                 {headerGroups.map((headerGroup) => (
@@ -123,11 +127,18 @@ const GeneralTable = () => {
                 })}
             </tbody>
             </table>
-            <button
-                onClick={() => console.log('gettb-sav-btn-clck')}
-            >
+            <div className='undertable_block'>
+              <span>
+                Дежурный
+              </span>
+              <button
+                onClick={() => console.log('grpd-table btn-sv clicked')}
+              >
                 Утвердить
-            </button>
+              </button>
+            </div>
+            <PeopleList peopleList={[]}>
+            </PeopleList>
         </>
     );
 }

@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 
 import { columns } from '../Table/TableEditorModel';
 import PeopleList from '../components/PeopleList';
+import {dateOptions} from '../App';
 
 const EditTable2 = ({groups}) => {
     // Создаем состояние для хранения экземпляра модели
@@ -58,8 +59,10 @@ const EditTable2 = ({groups}) => {
               // Отправляем список больных
               body: JSON.stringify({
                 people: tableModel.getBusyManList(),
-                numberOfCourse: tableModel.numberOfCourse
-            }),
+                numberOfCourse: tableModel.numberOfCourse,
+                date: new Date().toLocaleDateString('ru-RU', dateOptions)
+                
+                }),
             });
             if (!response.ok) {
               throw new Error('Ошибка при отправке данных занятых.');
@@ -116,8 +119,8 @@ const EditTable2 = ({groups}) => {
 
     return (
     <>
-        <div>
-            <span>Развернутая Строевая записка</span>
+        <div className='table_header'>
+            <h4>РАЗВЕРНУТАЯ СТРОЕВАЯ ЗАПИСКА<br/>{tableModel?.numberOfCourse ?? ''} курса на {tableModel?.savedDate ?? ''}</h4>
         </div>
         <table {...getTableProps()}  className="styled-table">
         <thead>
@@ -134,22 +137,24 @@ const EditTable2 = ({groups}) => {
             prepareRow(row);
             return (
                 <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => (
-                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                ))}
-                </tr>
-            );
+                        {row.cells.map((cell) => (
+                            <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                        ))}
+                    </tr>
+                );
             })}
-        </tbody>
-        </table>
-        <div>
-        <span>Дежурный</span>
-        <button
-            onClick={() => onButtonSaveClicked()}
-        >
-            Утвердить
-        </button>
-        </div>
+                </tbody>
+            </table>
+            <div className='undertable_block'>
+                <span>
+                    Дежурный
+                </span>
+                <button
+                    onClick={() => onButtonSaveClicked()}
+                >
+                    Утвердить
+                </button>
+            </div>
             <PeopleList peopleList={tableModel?.getBusyManListForTable() || []}>
             </PeopleList>
             {chooseManOpen &&

@@ -1,67 +1,70 @@
-[
-  {
-    "groupNumber": 5111,
-    "columns": {
-      "service": [],
-      "lazaret": [],
-      "hospital": [],
-      "trip": [],
-      "vacation": [],
-      "dismissal": [],
-      "other": []
+{
+  "date": "18.01.2025",
+  "people": [
+    {
+      "groupNumber": 5111,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    },
+    {
+      "groupNumber": 5112,
+      "columns": {
+        "service": [],
+        "lazaret": [
+          "РА-162457890"
+        ],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    },
+    {
+      "groupNumber": 5113,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [
+          "РА-163456789",
+          "РА-183456791"
+        ],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    },
+    {
+      "groupNumber": 5114,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    },
+    {
+      "groupNumber": 5115,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
     }
-  },
-  {
-    "groupNumber": 5112,
-    "columns": {
-      "service": [],
-      "lazaret": [
-        "РА-162457890"
-      ],
-      "hospital": [],
-      "trip": [],
-      "vacation": [],
-      "dismissal": [],
-      "other": []
-    }
-  },
-  {
-    "groupNumber": 5113,
-    "columns": {
-      "service": [],
-      "lazaret": [],
-      "hospital": [
-        "РА-163456789",
-        "РА-183456791"
-      ],
-      "trip": [],
-      "vacation": [],
-      "dismissal": [],
-      "other": []
-    }
-  },
-  {
-    "groupNumber": 5114,
-    "columns": {
-      "service": [],
-      "lazaret": [],
-      "hospital": [],
-      "trip": [],
-      "vacation": [],
-      "dismissal": [],
-      "other": []
-    }
-  },
-  {
-    "groupNumber": 5115,
-    "columns": {
-      "service": [],
-      "lazaret": [],
-      "hospital": [],
-      "trip": [],
-      "vacation": [],
-      "dismissal": [],
-      "other": []
-    }
-  }
-]
+  ]
+}

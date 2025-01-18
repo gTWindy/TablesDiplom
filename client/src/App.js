@@ -15,6 +15,8 @@ import MedTable from './Table/MedTable/MedTable';
 
 // Объект модели таблицы пятого курса 
 let tableModelFifthCourse = null;
+//Настройки отображения даты 
+export const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
 
 const App = () => {
     const navigate = useNavigate();
@@ -62,4 +64,6 @@ const App = () => {
     )
 }
 
-export default App;
+export {
+    App
+};

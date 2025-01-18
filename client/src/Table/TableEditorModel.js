@@ -63,6 +63,8 @@ class TableEditorModel {
   numbersOfGroups = [];
   // Номер курса
   numberOfCourse = -1;
+  // Дата, сохраненных данных
+  savedDate = '';
   // Данные самой таблицы
   data = [];
 
@@ -104,6 +106,16 @@ class TableEditorModel {
       if (!response.ok)
         throw new Error(`Network response was not ok: ${response.status}`);
       this.manList = await response.json();
+    } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+    };
+
+    try {
+      const response = await fetch(`http://localhost:5000/busyList?course=${this.numberOfCourse}`);
+      if (!response.ok)
+        throw new Error('Network response was not ok');
+      const parsedResponse = await response.json();
+      this.savedDate = parsedResponse.date;
     } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
     };

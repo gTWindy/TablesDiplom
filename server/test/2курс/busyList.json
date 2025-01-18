@@ -1,3 +1,65 @@
-[
-
-]
+{
+  "date": "18.01.2025",
+  "people": [
+    {
+      "groupNumber": 2111,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    },
+    {
+      "groupNumber": 2112,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    },
+    {
+      "groupNumber": 2113,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    },
+    {
+      "groupNumber": 2114,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    },
+    {
+      "groupNumber": 2115,
+      "columns": {
+        "service": [],
+        "lazaret": [],
+        "hospital": [],
+        "trip": [],
+        "vacation": [],
+        "dismissal": [],
+        "other": []
+      }
+    }
+  ]
+}

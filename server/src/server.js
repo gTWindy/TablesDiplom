@@ -110,16 +110,69 @@ app.post('/busyList', (req, res) => {
     // Номер курса
     const numberOfCourse = formData.numberOfCourse;
 
-    const filePathBusy = `./test/${numberOfCourse}курс/busyPeople.json`;
+    const filePathBusy = `./test/${numberOfCourse}курс/busyList.json`;
 
     // Записываем обновленные данные в файл
-    fs.writeFileSync(filePathBusy, JSON.stringify(formData.people, null, 2)); // Форматируем JSON с отступами
+    fs.writeFileSync(filePathBusy, JSON.stringify({
+        date: formData.date,
+        people: formData.people
+    }, null, 2));
     return res.status(200);
 })
 
 app.get('/busyList', (req, res) => {
-    // Доступ к данным формы
-    const formData = req.body;
+    // Извлекаем параметр курс из запроса
+    const course = req.query.course;
+    if (course) {
+        let busyList = null;
+        switch(Number(course)) {
+            case 1:
+                busyList = getBusyList('./test/1курс/busyList.json');
+                break;
+            case 2:
+                busyList = getBusyList('./test/2курс/busyList.json');
+                break;
+            case 3:
+                busyList = getBusyList('./test/3курс/busyList.json');
+                break;
+            case 4:
+                busyList = getBusyList('./test/4курс/busyList.json');
+                break;
+            case 5:
+                busyList = getBusyList('./test/5курс/busyList.json');
+                break;
+            default:
+                return res.status(404);
+        }
+        // Отправляем JSON-ответ
+        return res.status(200).json({...busyList});
+    }
+    else {
+        // Получаем первый курс
+        const firstCourse = getBusyList('./test/1курс/busyList.json', true);
+
+        // Получаем второй курс
+        const secondCourse = getBusyList('./test/2курс/busyList.json', true);
+
+        // Получаем третий курс
+        const thirdCourse = getBusyList('./test/3курс/busyList.json', true);
+
+        // Получаем четвёртый курс
+        const fourthCourse = getBusyList('./test/4курс/busyList.json', true);
+
+        // Получаем пятый курс
+        const fifthCourse = getBusyList('./test/5курс/busyList.json', true);
+
+        // Отправляем JSON-ответ
+        return res.status(200).json({
+            firstCourse: firstCourse.people,
+            secondCourse: secondCourse.people,
+            thirdCourse: thirdCourse.people,
+            fourthCourse: fourthCourse.people,
+            fifthCourse: fifthCourse.people
+        });
+    }
+
 
     const firstCourse = getBusyList('./test/1курс/busyList.json');
     const secondCourse = getBusyList('./test/2курс/busyList.json');
@@ -128,11 +181,11 @@ app.get('/busyList', (req, res) => {
     const fifthCourse = getBusyList('./test/5курс/busyList.json');
 
     return res.status(200).json([
-        {...firstCourse},
-        {...secondCourse},
-        {...thirdCourse},
-        {...fourthCourse},
-        {...fifthCourse}
+        {...firstCourse.people},
+        {...secondCourse.people},
+        {...thirdCourse.people},
+        {...fourthCourse.peopele},
+        {...fifthCourse.peopele}
     ]);
 })
 

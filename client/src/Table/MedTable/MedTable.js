@@ -7,6 +7,7 @@ import ChooseMan from '../../components/ChooseMan/ChooseMan';
 import ComboBox from '../../components/ComboBox';
 import '../Table.css';
 import './MedTable.css';
+import {dateOptions} from '../../App';
 
 const courseTranslate = {
     firstCourse: "Первый курс",
@@ -144,9 +145,8 @@ const MedTable = () => {
         newRows[newRows.length - 1].group = newManNode.group;
         newRows[newRows.length - 1].medInstitution = "";
         newRows[newRows.length - 1].diagnosis = "";
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         // Берём текущую дату
-        const formattedDate = new Date().toLocaleDateString('ru-RU', options);
+        const formattedDate = new Date().toLocaleDateString('ru-RU', dateOptions);
         newRows[newRows.length - 1].date = formattedDate;
         newRows[newRows.length - 1]["k/l"] = "";
         newRows[newRows.length - 1]['Личный номер'] = newManNode.value['Личный номер'];
@@ -175,7 +175,7 @@ const MedTable = () => {
 
     return (
         <div 
-            className="table-container" 
+            className="med_table-container" 
             onContextMenu={(e) => handleTableContextMenu(e)}
             onClick={(e) => handleTableClick(e)}
         >
@@ -235,15 +235,17 @@ const MedTable = () => {
                     ))}
                 </tbody>
             </table>
-            <button
-                className='med_table-button'
-                onClick={async () => {
-                    await onButtonSaveClicked();
-                }}
-                disabled={!needSave}
-            >
-                Сохранить
-            </button>
+            <div className='undertable_block'>
+                <button
+                    className='med_table-button'
+                    onClick={async () => {
+                        await onButtonSaveClicked();
+                    }}
+                    disabled={!needSave}
+                >
+                    Сохранить
+                </button>
+            </div>
             {isShowMenu &&
                 <ContextMenu
                     x={menuPosition.x}
