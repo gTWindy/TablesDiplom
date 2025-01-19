@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const deepMerge = require('deepmerge-json');
-
+// Модуль для работы с БД
+const db = require('./db');
 const {
     getCourseList,
     getBusyList
@@ -16,6 +17,17 @@ app.use(express.json());
 
 // Путь к файлу с больными
 const filePathSick = './test/больные/sick.json';
+
+//Столбцы у таблиц
+const columnsNames = [
+    "service",
+    "lazaret",
+    "hospital",
+    "trip",
+    "vacation",
+    "dismissal",
+    "other"
+]
 
 // Обработка POST-запроса
 app.post('/checkLogin', (req, res) => {
@@ -148,8 +160,8 @@ app.get('/busyList', (req, res) => {
         return res.status(200).json({...busyList});
     }
     else {
-        // Получаем первый курс
-        const firstCourse = getBusyList('./test/1курс/busyList.json', true);
+        // Получаем первый курс занятых
+        const firstCourseBusy = getBusyList('./test/1курс/busyList.json', true);
 
         // Получаем второй курс
         const secondCourse = getBusyList('./test/2курс/busyList.json', true);
@@ -162,31 +174,16 @@ app.get('/busyList', (req, res) => {
 
         // Получаем пятый курс
         const fifthCourse = getBusyList('./test/5курс/busyList.json', true);
-
+        
         // Отправляем JSON-ответ
-        return res.status(200).json({
-            firstCourse: firstCourse.people,
-            secondCourse: secondCourse.people,
-            thirdCourse: thirdCourse.people,
-            fourthCourse: fourthCourse.people,
-            fifthCourse: fifthCourse.people
-        });
+        return res.status(200).json([
+            {...firstCourseBusy.people},
+            {...secondCourse.people},
+            {...thirdCourse.people},
+            {...fourthCourse.people},
+            {...fifthCourse.people}
+        ]);
     }
-
-
-    const firstCourse = getBusyList('./test/1курс/busyList.json');
-    const secondCourse = getBusyList('./test/2курс/busyList.json');
-    const thirdCourse = getBusyList('./test/3курс/busyList.json');
-    const fourthCourse = getBusyList('./test/4курс/busyList.json');
-    const fifthCourse = getBusyList('./test/5курс/busyList.json');
-
-    return res.status(200).json([
-        {...firstCourse.people},
-        {...secondCourse.people},
-        {...thirdCourse.people},
-        {...fourthCourse.peopele},
-        {...fifthCourse.peopele}
-    ]);
 })
 
 // Получаем список больных

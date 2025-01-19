@@ -147,8 +147,15 @@ const EditTable2 = ({groups}) => {
             </table>
             <div className='undertable_block'>
                 <span>
-                    Дежурный
+                    Дежурный за {tableModel?.numberOfCourse ?? ''} курс
                 </span>
+                <input
+                placeholder='Звание'
+                ></input>
+                <input
+                placeholder='Фамилия'
+                ></input>
+
                 <button
                     onClick={() => onButtonSaveClicked()}
                 >
