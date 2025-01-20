@@ -153,9 +153,9 @@ class TableEditorModel {
     return this.manListBusy[row].columns[columnName];
   }
 
-  // Получаем список занятых людей для представления в таблице
+  // Получаем список занятых людей для представления в таблице отсутствующих
   getBusyManListForTable = () => {
-    let result = [];
+    let listOfAbsent = [];
     // Порядковый номер.
     let i = 1;
     for (let group of this.manListBusy) {
@@ -164,7 +164,9 @@ class TableEditorModel {
           const busyMan = this.manList[group.groupNumber].find((man) => {
             return man['Личный номер'] === id;
           });
-          result.push({
+          if (!busyMan)
+            continue;
+          listOfAbsent.push({
             number: i,
             course: this.numberOfCourse,
             rank: busyMan['Воинское звание'],
@@ -176,7 +178,7 @@ class TableEditorModel {
         }
       }
     }
-    return result;
+    return listOfAbsent;
   }
 
   // Возвращаем список людей выбранной группы, которые не заняты

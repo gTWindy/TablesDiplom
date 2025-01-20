@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 const columns = [
     {
         Header: '№ п/п',
-        accessor: 'number',// accessor is the "key" in the data
+        accessor: 'number',// порядковый номер
     },
     {
         Header: 'Курс',
@@ -44,7 +44,7 @@ const PeopleList = ({ peopleList }) => {
 
     return (
         <>
-            <table {...getTableProps()} className="styled-table">
+            <table {...getTableProps()} className="styled-table table_of_absent">
                 <thead>
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>

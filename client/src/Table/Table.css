@@ -24,7 +24,7 @@
 
 td {
   width: 9vw;
-  height: 4vw;
+  height: 3vw;
 }
 
 .cell-input {
@@ -49,6 +49,10 @@ td {
   margin-right: 5vw;
   margin-top: 1vw;
   margin-bottom: 1vw;
+}
+
+.table_of_absent {
+  margin-bottom: 3vw;
 }
 
 .context-menu {

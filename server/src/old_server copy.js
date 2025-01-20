@@ -3,11 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const deepMerge = require('deepmerge-json');
 // Модуль для работы с БД
-const { DB } = require('./db');
-const db = new DB('./test/cadets.db');
-// Подключение к базе данных
-db.connect();
-
+const db = require('./db');
 const {
     getCourseList,
     getBusyList
@@ -107,7 +103,7 @@ app.get('/manList', (req, res) => {
 
         // Получаем пятый курс
         const fifthCourse = getCourseList('./test/5курс/группы/');
-        
+
         // Отправляем JSON-ответ
         return res.status(200).json({
             firstCourse,
@@ -136,7 +132,7 @@ app.post('/busyList', (req, res) => {
     return res.status(200);
 })
 
-app.get('/busyList', async (req, res) => {
+app.get('/busyList', (req, res) => {
     // Извлекаем параметр курс из запроса
     const course = req.query.course;
     if (course) {
@@ -164,55 +160,29 @@ app.get('/busyList', async (req, res) => {
         return res.status(200).json({...busyList});
     }
     else {
-        // Спписок занятых людей с ФИО и т.д.
-        let busyList = [];
-        
-        const pushToBysyList = async (people) => {
-            for (let columnName in people) {
-                for (let busyMan of people[columnName]){
-                    const selectedRow = await db.selectById(busyMan);
-                    selectedRow.reason = columnName;
-                    selectedRow.remark = 'пока пусто';
-                    busyList.push(selectedRow);
-                }
-            }
-        }
-
         // Получаем первый курс занятых
         const firstCourseBusy = getBusyList('./test/1курс/busyList.json', true);
-        await pushToBysyList(firstCourseBusy.people);
-            
+
         // Получаем второй курс
         const secondCourse = getBusyList('./test/2курс/busyList.json', true);
-        await pushToBysyList(secondCourse.people);
 
         // Получаем третий курс
         const thirdCourse = getBusyList('./test/3курс/busyList.json', true);
-        await pushToBysyList(thirdCourse.people);
 
         // Получаем четвёртый курс
         const fourthCourse = getBusyList('./test/4курс/busyList.json', true);
-        await pushToBysyList(fourthCourse.people);
 
         // Получаем пятый курс
         const fifthCourse = getBusyList('./test/5курс/busyList.json', true);
-        await pushToBysyList(fifthCourse.people);
-
-        busyList = busyList.map((element, index) => {
-            element.number = index + 1;
-            return element;
-        })
-
+        
         // Отправляем JSON-ответ
-        return res.status(200).json({
-            byColumns: 
-                [{...firstCourseBusy.people},
-                {...secondCourse.people},
-                {...thirdCourse.people},
-                {...fourthCourse.people},
-                {...fifthCourse.people}],
-            list: busyList
-        });
+        return res.status(200).json([
+            {...firstCourseBusy.people},
+            {...secondCourse.people},
+            {...thirdCourse.people},
+            {...fourthCourse.people},
+            {...fifthCourse.people}
+        ]);
     }
 })
 

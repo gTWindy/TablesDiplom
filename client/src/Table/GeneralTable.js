@@ -55,6 +55,7 @@ const columns = [
 const GeneralTable = () => {
 
   const [data, setData] = useState([]);
+  const [busyList, setBusyList] = useState([]);
 
   useEffect(() => {
       const createAndLoadModel = async () => {
@@ -63,23 +64,25 @@ const GeneralTable = () => {
           if (!response.ok)
             throw new Error(`Network response was not ok: ${response.status}`);
           const loadedData = await response.json();
+          const dataByColumns = loadedData.byColumns;
           let newData = [];
-          for (let i = 0; i < loadedData.length; ++i) {
+          for (let i = 0; i < dataByColumns.length; ++i) {
             newData.push({
               course: i+1,
               list: 100,
-              have: 100 - (loadedData[i].service.length + loadedData[i].lazaret.length + loadedData[i].hospital.length + 
-                loadedData[i].trip.length + loadedData[i].vacation.length + loadedData[i].dismissal.length + loadedData[i].other.length),
-              service: loadedData[i].service.length,
-              lazaret: loadedData[i].lazaret.length,
-              hospital: loadedData[i].hospital.length,
-              trip: loadedData[i].trip.length,
-              vacation: loadedData[i].vacation.length,
-              dismissal: loadedData[i].dismissal.length,
-              other: loadedData[i].other.length
+              have: 100 - (dataByColumns[i].service.length + dataByColumns[i].lazaret.length + dataByColumns[i].hospital.length + 
+                dataByColumns[i].trip.length + dataByColumns[i].vacation.length + dataByColumns[i].dismissal.length + dataByColumns[i].other.length),
+              service: dataByColumns[i].service.length,
+              lazaret: dataByColumns[i].lazaret.length,
+              hospital: dataByColumns[i].hospital.length,
+              trip: dataByColumns[i].trip.length,
+              vacation: dataByColumns[i].vacation.length,
+              dismissal: dataByColumns[i].dismissal.length,
+              other: dataByColumns[i].other.length
             })
           }
           setData(newData);
+          setBusyList(loadedData.list);
         } catch (error) {
           console.error('There has been a problem with your fetch operation:', error);
         };
@@ -137,7 +140,7 @@ const GeneralTable = () => {
                 Утвердить
               </button>
             </div>
-            <PeopleList peopleList={[]}>
+            <PeopleList peopleList={busyList}>
             </PeopleList>
         </>
     );

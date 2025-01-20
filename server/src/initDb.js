@@ -1,7 +1,6 @@
 // Модуль для работы с БД
 const { DB } = require('./db');
-const db = new DB('./cadets.db');
-
+const db = new DB('../test/cadets.db');
 
 const {
     getCourseList,
@@ -13,28 +12,23 @@ async function processData() {
     try {
         // Подключение к базе данных
         await db.connect();
-
+        await db.createTables();
         // Получаем данные о курсах
-        const firstCourse = getCourseList('../test/1курс/группы/');
-        const secondCourse = getCourseList('../test/2курс/группы/');
-        const thirdCourse = getCourseList('../test/3курс/группы/');
-        const fourthCourse = getCourseList('../test/4курс/группы/');
-        const fifthCourse = getCourseList('../test/5курс/группы/');
+        const сourses = [getCourseList('../test/1курс/группы/'), getCourseList('../test/2курс/группы/'),
+                        getCourseList('../test/3курс/группы/'), getCourseList('../test/4курс/группы/'), getCourseList('../test/5курс/группы/')];
         
-        console.log('Все группы получены.');
+        console.log('initDb: Все курсы и группы получены.');
 
         let serial = 1;
-        for (let group in firstCourse) {
-            for (let cadet of firstCourse[group]) {
-                console.log(cadet);
-                db.insertCadet(1, group, serial, cadet['Воинское звание'], cadet['ФИО'],
-                    cadet['Дата рождения'], cadet['Номер телефона'], cadet['Личный номер']);
+        for (let course = 0; course < 5; course++) {
+            for (let group in сourses[course]) {
+                for (let cadet of сourses[course][group]) {
+                    db.insertCadet(course + 1, group, serial, cadet['Воинское звание'], cadet['ФИО'],
+                        cadet['Дата рождения'], cadet['Номер телефона'], cadet['Личный номер']);
+                }
             }
         }
-
-        db.select();
-
-        console.log('Данные обработаны.');
+        console.log('initDb: Данные обработаны.');
     } catch (error) {
         console.error('Ошибка при обработке данных:', error);
     }
