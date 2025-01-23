@@ -1,5 +1,5 @@
 import { useTable } from 'react-table';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 
 import ChooseManEdit from '../components/ChooseMan/ChooseManEdit';
 import {TableEditorModel} from './TableEditorModel'
@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 
 import { columns } from '../Table/TableEditorModel';
 import PeopleList from '../components/PeopleList';
-import {dateOptions} from '../App';
+
 
 const EditTable2 = ({groups}) => {
     // Создаем состояние для хранения экземпляра модели
@@ -16,7 +16,12 @@ const EditTable2 = ({groups}) => {
     const [chooseManOpen, setChooseManOpen] = useState(false);
     // Для хранения текущей ячейки
     const [clickedCell, setClickedCell] = useState({ row: null, column: null });
-    
+    // Ввод имени
+    const nameInput = useRef(null);
+    // Ввод звания
+    const rankInput = useRef(null);
+
+
     // Создаем экземпляр модели только один раз при монтировании компонента
     useEffect(() => {
         const createAndLoadModel = async () => {
@@ -50,27 +55,9 @@ const EditTable2 = ({groups}) => {
     
     // Нажатие кнопки сохранить
     const onButtonSaveClicked = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/busyList', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              // Отправляем список больных
-              body: JSON.stringify({
-                people: tableModel.getBusyManList(),
-                numberOfCourse: tableModel.numberOfCourse,
-                date: new Date().toLocaleDateString('ru-RU', dateOptions)
-                
-                }),
-            });
-            if (!response.ok) {
-              throw new Error('Ошибка при отправке данных занятых.');
-            }
-            //setNeedSave(false);
-        } catch (error) {
-            console.error('Ошибка:', error);
-        } 
+        tableModel?.setSavedName(nameInput.current.value);
+        tableModel?.setSavedRank(rankInput.current.value);
+        await tableModel.sendBusyListToServer();
     };   
 
     // Идентификаторы редактируемых столбцов
@@ -149,11 +136,16 @@ const EditTable2 = ({groups}) => {
                 <span>
                     Дежурный за {tableModel?.numberOfCourse ?? ''} курс
                 </span>
+                
                 <input
+                ref={rankInput}
+                defaultValue={tableModel?.getSavedRank() || null}
                 placeholder='Звание'
                 ></input>
                 <input
-                placeholder='Фамилия'
+                ref = {nameInput}
+                defaultValue={tableModel?.getSavedName() || null}
+                placeholder='ФИО'
                 ></input>
 
                 <button

@@ -106,16 +106,18 @@ class DB {
         const sql = `
             CREATE TABLE IF NOT EXISTS saves (
                 course INTEGER PRIMARY KEY,
-                date DATE
+                date DATE,
+                name TEXT,
+                rank TEXT
             );
             
-            INSERT INTO saves(course, date)
-            VALUES (0, '1901-12-01'),
-                    (1, DATE('now')),
-                    (2, DATE('now')),
-                    (3, DATE('now')),
-                    (4, DATE('now')),
-                    (5, DATE('now'));
+            INSERT INTO saves(course, date, name, rank)
+            VALUES (0, '1901-12-01', '', ''),
+                    (1, DATE('now'), '', ''),
+                    (2, DATE('now'), '', ''),
+                    (3, DATE('now'), '', ''),
+                    (4, DATE('now'), '', ''),
+                    (5, DATE('now'), '', '');
         });
         `;
         
@@ -140,7 +142,7 @@ class DB {
                     console.error(err);
                     reject(err);
                 } else {
-                    resolve({ id: this.lastID });
+                    resolve();
                 }
             });
         });
@@ -168,7 +170,7 @@ class DB {
     }
 
     // Получение всех курсантов
-    async select() {
+    async selectAllCadets() {
         const sql = `SELECT * FROM cadets`;
         return new Promise((resolve, reject) => {
             this.db.all(sql, [], (err, rows) => {
@@ -178,7 +180,7 @@ class DB {
                 } else {
                     console.log(`db: Selected all from cadets:`);
                     rows.forEach(row => {
-                        // Пример вывода имени курсанта
+                        // Вывод имени курсанта
                         console.log(`${row.id}: ${row.name}`);
                     });
                     resolve();
@@ -187,6 +189,7 @@ class DB {
         });
     }
 
+    // 
     async selectById(id) {
         const sql = `SELECT * FROM cadets WHERE id = ?`;
         return new Promise((resolve, reject) => {
@@ -197,6 +200,59 @@ class DB {
                 } else {
                     console.log(`Selected by id ${id}:`);
                     resolve(row); // Возвращаем одну строку
+                }
+            });
+        });
+    }
+
+    // Вставить запись о сохранении
+    async insertRowInSaveTable(numberOfCourse, date, name, rank) {
+        const sql = `INSERT INTO saves (course, date, name, rank)
+                    VALUES (:numberOfCourse, :date, :name, :rank)
+                    ON CONFLICT(course) DO UPDATE SET
+                        date = EXCLUDED.date,
+                        name = EXCLUDED.name,
+                        rank = EXCLUDED.rank;
+                        `;
+        return this.run(sql, [numberOfCourse, date, name, rank]);
+    }
+
+    async selectSaveRowByCourse(course) {
+        const sql = `SELECT * FROM saves WHERE course = ?`;
+        return new Promise((resolve, reject) => {
+            this.db.get(sql, [course], (err, row) => {
+                if (err) {
+                    console.error(err.message);
+                    reject(err);
+                } else {
+                    console.log(`Selected by course ${course}:`);
+                    resolve(row);
+                }
+            });
+        });
+    }
+
+    // Вставить занятого курсанта в таблицу
+    async insertOrUpdateBusyTable(id, type) {
+        const sql = `INSERT INTO busy (id, type)
+                    VALUES (:id, :type)
+                    ON CONFLICT(id) DO UPDATE SET
+                        type = EXCLUDED.type;`;
+        return new Promise((resolve, reject) => {
+            return this.run(sql, [id, type]);
+        });
+    }
+
+    async selectByGroupFromBusyTable(groupNumber) {
+        const sql = `SELECT * FROM busy WHERE id in (SELECT id from cadets WHERE "group" == ?)`;
+        return new Promise((resolve, reject) => {
+            this.db.all(sql, [groupNumber], (err, rows) => { // Используем db.get для одного результата
+                if (err) {
+                    console.error(err.message);
+                    reject(err);
+                } else {
+                    console.log(`Selected by group ${groupNumber}:`);
+                    resolve(rows); // Возвращаем строчки
                 }
             });
         });

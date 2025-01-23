@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "pkg": {
+    "assets": ["node_modules/sqlite3/lib/bindings"]
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "deepmerge-json": "^1.5.0",

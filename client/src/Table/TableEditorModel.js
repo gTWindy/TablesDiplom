@@ -1,3 +1,5 @@
+import {dateOptions} from '../App';
+
 const columns = [
   {
     Header: 'N п/п',
@@ -65,6 +67,10 @@ class TableEditorModel {
   numberOfCourse = -1;
   // Дата, сохраненных данных
   savedDate = '';
+  // Сохраненное имя
+  savedName = null;
+  // Сохраненное звание
+  savedRank = null;
   // Данные самой таблицы
   data = [];
 
@@ -116,6 +122,8 @@ class TableEditorModel {
         throw new Error('Network response was not ok');
       const parsedResponse = await response.json();
       this.savedDate = parsedResponse.date;
+      this.savedName = parsedResponse.name;
+      this.savedRank = parsedResponse.rank;
     } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
     };
@@ -196,6 +204,51 @@ class TableEditorModel {
     const groupName = this.numbersOfGroups[row];
     
     return this.manList[groupName].filter(person => !busyPeople.includes(person['Личный номер']));
+  }
+
+  // Отправляем список занятых на сервер
+  sendBusyListToServer = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/busyList', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // Отправляем список занятых
+        body: JSON.stringify({
+          people: this.manListBusy,
+          numberOfCourse: this.numberOfCourse,
+          savedName: this.savedName,
+          savedRank: this.savedRank,
+          date: new Date().toLocaleDateString('ru-RU', dateOptions)
+
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Ошибка при отправке данных занятых.');
+      }
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
+  }
+
+  // Устанавливаем новое звание
+  setSavedRank = (newRank) => {
+    this.savedRank = newRank;
+  }
+  // Возвращаем сохраненное звание
+  getSavedRank = () => {
+    return this.savedRank;
+  }
+
+  // Устанавливаем новое имя
+  setSavedName = (newName) => {
+    this.savedName = newName;
+  }
+
+  // Возвращаем сохраненное имя
+  getSavedName = () => {
+    return this.savedName;
   }
 
 }

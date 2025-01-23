@@ -126,8 +126,17 @@ app.post('/busyList', (req, res) => {
     // Номер курса
     const numberOfCourse = formData.numberOfCourse;
 
-    const filePathBusy = `./test/${numberOfCourse}курс/busyList.json`;
+    // Вставляем занятых в бд
+    for (const group of formData.people) {
+        for (let columnName in group.columns) {
+            group.columns[columnName].forEach((busyManId) => db.insertOrUpdateBusyTable(busyManId, columnName));
+        }
+    }
 
+    // Вставляем запись о сохранении в бд
+    db.insertRowInSaveTable(numberOfCourse, formData.date, formData.savedName, formData.savedRank);
+
+    const filePathBusy = `./test/${numberOfCourse}курс/busyList.json`;
     // Записываем обновленные данные в файл
     fs.writeFileSync(filePathBusy, JSON.stringify({
         date: formData.date,
@@ -141,6 +150,7 @@ app.get('/busyList', async (req, res) => {
     const course = req.query.course;
     if (course) {
         let busyList = null;
+
         switch(Number(course)) {
             case 1:
                 busyList = getBusyList('./test/1курс/busyList.json');
@@ -160,6 +170,9 @@ app.get('/busyList', async (req, res) => {
             default:
                 return res.status(404);
         }
+        const saveRow = await db.selectSaveRowByCourse(Number(course));
+        busyList.rank = saveRow.rank;
+        busyList.name = saveRow.name;
         // Отправляем JSON-ответ
         return res.status(200).json({...busyList});
     }
