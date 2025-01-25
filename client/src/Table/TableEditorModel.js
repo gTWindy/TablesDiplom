@@ -119,25 +119,19 @@ class TableEditorModel {
       }
     );
     
-    this.makeRequest(`http://localhost:5000/busyList?course=${this.numberOfCourse}`,
+    await this.makeRequest(`http://localhost:5000/busyList?course=${this.numberOfCourse}`,
       (result) => {
         this.savedDate = result.date;
         this.savedName = result.name;
         this.savedRank = result.rank;
-      }
-    );
-
-    this.makeRequest(`http://localhost:5000/sick?course=${this.numberOfCourse}`,
-      (sicks) => {
-        for (let i = 0; i < this.data.length; ++i) {
-          const groupNumber = this.data[i].groupNumber;
+        for (let row = 0; row < this.data.length; ++row) {
+          const groupNumber = this.data[row].groupNumber;//.toString();
           
-          this.data[i].hospital += sicks[groupNumber]?.hospital?.length || 0;
-          this.manListBusy[i].columns.hospital.push(...(sicks[groupNumber]?.hospital?.map(sick => sick['Личный номер']) || []))
-          this.data[i].have -= this.data[i].hospital;
-          this.data[i].lazaret += sicks[groupNumber]?.lazaret?.length || 0;
-          this.manListBusy[i].columns.lazaret.push(...(sicks[groupNumber]?.lazaret?.map(sick => sick['Личный номер']) || []))
-          this.data[i].have -= this.data[i].lazaret;
+          result[groupNumber].forEach( (man) => {
+            this.manListBusy[row].columns[man.type].push(man.id);
+            this.data[row][man.type] += 1;
+            this.data[row].have -= 1;  
+          })
         }
       }
     );

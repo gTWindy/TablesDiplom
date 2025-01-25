@@ -1,25 +1,34 @@
 {
-  "date": "19.01.2025",
+  "date": "25.01.2025",
   "people": [
     {
       "groupNumber": 5111,
       "columns": {
-        "service": [],
+        "service": [
+          "РА-163450123",
+          "РА-163451234",
+          "РА-163456789",
+          "РА-163457890",
+          "РА-163459012"
+        ],
         "lazaret": [],
         "hospital": [],
         "trip": [],
         "vacation": [],
         "dismissal": [],
-        "other": []
+        "other": [
+          "РА-163453456",
+          "РА-163458111"
+        ]
       }
     },
     {
       "groupNumber": 5112,
       "columns": {
-        "service": [],
-        "lazaret": [
-          "РА-162457890"
+        "service": [
+          "РА-163666123"
         ],
+        "lazaret": [],
         "hospital": [],
         "trip": [],
         "vacation": [],
@@ -32,36 +41,51 @@
       "columns": {
         "service": [],
         "lazaret": [],
-        "hospital": [
-          "РА-163456789",
-          "РА-183456791"
-        ],
+        "hospital": [],
         "trip": [],
         "vacation": [],
-        "dismissal": [],
+        "dismissal": [
+          "РА-173456790",
+          "РА-203456793",
+          "РА-223456795"
+        ],
         "other": []
       }
     },
     {
       "groupNumber": 5114,
       "columns": {
-        "service": [],
+        "service": [
+          "РА-263456799",
+          "РА-283456801",
+          "РА-333456806"
+        ],
         "lazaret": [],
         "hospital": [],
         "trip": [],
         "vacation": [],
-        "dismissal": [],
+        "dismissal": [
+          "РА-313456804"
+        ],
         "other": []
       }
     },
     {
       "groupNumber": 5115,
       "columns": {
-        "service": [],
+        "service": [
+          "РА-174000002",
+          "РА-204000005"
+        ],
         "lazaret": [],
         "hospital": [],
         "trip": [],
-        "vacation": [],
+        "vacation": [
+          "РА-164000001",
+          "РА-184000003",
+          "РА-214000006",
+          "РА-224000007"
+        ],
         "dismissal": [],
         "other": []
       }

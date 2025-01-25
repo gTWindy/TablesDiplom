@@ -243,6 +243,7 @@ class DB {
         });
     }
 
+    // Взять список занятых из группы
     async selectByGroupFromBusyTable(groupNumber) {
         const sql = `SELECT * FROM busy WHERE id in (SELECT id from cadets WHERE "group" == ?)`;
         return new Promise((resolve, reject) => {

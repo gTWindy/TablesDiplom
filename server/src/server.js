@@ -161,23 +161,43 @@ app.get('/busyList', async (req, res) => {
     // Извлекаем параметр курс из запроса
     const course = req.query.course;
     if (course) {
-        let busyList = null;
+        let busyList = {};
 
         switch(Number(course)) {
             case 1:
-                busyList = getBusyList('./test/1курс/busyList.json');
+                busyList['1111'] = await db.selectByGroupFromBusyTable(1111);
+                busyList['1112'] = await db.selectByGroupFromBusyTable(1112);
+                busyList['1113'] = await db.selectByGroupFromBusyTable(1113);
+                busyList['1114'] = await db.selectByGroupFromBusyTable(1114);
+                busyList['1115'] = await db.selectByGroupFromBusyTable(1115);
                 break;
             case 2:
-                busyList = getBusyList('./test/2курс/busyList.json');
+                busyList['2111'] = await db.selectByGroupFromBusyTable(2111);
+                busyList['2112'] = await db.selectByGroupFromBusyTable(2112);
+                busyList['2113'] = await db.selectByGroupFromBusyTable(2113);
+                busyList['2114'] = await db.selectByGroupFromBusyTable(2114);
+                busyList['2115'] = await db.selectByGroupFromBusyTable(2115);
                 break;
             case 3:
-                busyList = getBusyList('./test/3курс/busyList.json');
+                busyList['3111'] = await db.selectByGroupFromBusyTable(3111);
+                busyList['3112'] = await db.selectByGroupFromBusyTable(3112);
+                busyList['3113'] = await db.selectByGroupFromBusyTable(3113);
+                busyList['3114'] = await db.selectByGroupFromBusyTable(3114);
+                busyList['3115'] = await db.selectByGroupFromBusyTable(3115);
                 break;
             case 4:
-                busyList = getBusyList('./test/4курс/busyList.json');
+                busyList['4111'] = await db.selectByGroupFromBusyTable(4111);
+                busyList['4112'] = await db.selectByGroupFromBusyTable(4112);
+                busyList['4113'] = await db.selectByGroupFromBusyTable(4113);
+                busyList['4114'] = await db.selectByGroupFromBusyTable(4114);
+                busyList['4115'] = await db.selectByGroupFromBusyTable(4115);
                 break;
             case 5:
-                busyList = getBusyList('./test/5курс/busyList.json');
+                busyList['5111'] = await db.selectByGroupFromBusyTable(5111);
+                busyList['5112'] = await db.selectByGroupFromBusyTable(5112);
+                busyList['5113'] = await db.selectByGroupFromBusyTable(5113);
+                busyList['5114'] = await db.selectByGroupFromBusyTable(5114);
+                busyList['5115'] = await db.selectByGroupFromBusyTable(5115);
                 break;
             default:
                 return res.status(404);
@@ -186,6 +206,7 @@ app.get('/busyList', async (req, res) => {
         if (saveRow) {
             busyList.rank = saveRow.rank;
             busyList.name = saveRow.name;
+            busyList.date = saveRow.date;
         }
         // Отправляем JSON-ответ
         return res.status(200).json({...busyList});
