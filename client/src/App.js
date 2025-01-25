@@ -15,8 +15,19 @@ import MedTable from './Table/MedTable/MedTable';
 
 // Объект модели таблицы пятого курса 
 let tableModelFifthCourse = null;
-//Настройки отображения даты 
+// Настройки отображения даты 
 export const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+// Перевод колонок
+export const translateForColumns =
+{
+    service: 'Наряд',
+    lazaret: 'Лазарет',
+    hospital: 'Госпиталь',
+    trip: 'Командировка',
+    vacation: 'Отпуск',
+    dismissal: 'Увольнение',
+    other: 'Прочее'
+}
 
 const App = () => {
     const navigate = useNavigate();

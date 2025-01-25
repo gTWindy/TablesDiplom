@@ -1,3 +1,15 @@
+// Перевод колонок
+const translateForColumns =
+{
+    service: 'Наряд',
+    lazaret: 'Лазарет',
+    hospital: 'Госпиталь',
+    trip: 'Командировка',
+    vacation: 'Отпуск',
+    dismissal: 'Увольнение',
+    other: 'Прочее'
+}
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -171,8 +183,10 @@ app.get('/busyList', async (req, res) => {
                 return res.status(404);
         }
         const saveRow = await db.selectSaveRowByCourse(Number(course));
-        busyList.rank = saveRow.rank;
-        busyList.name = saveRow.name;
+        if (saveRow) {
+            busyList.rank = saveRow.rank;
+            busyList.name = saveRow.name;
+        }
         // Отправляем JSON-ответ
         return res.status(200).json({...busyList});
     }
@@ -184,8 +198,8 @@ app.get('/busyList', async (req, res) => {
             for (let columnName in people) {
                 for (let busyMan of people[columnName]){
                     const selectedRow = await db.selectById(busyMan);
-                    selectedRow.reason = columnName;
-                    selectedRow.remark = 'пока пусто';
+                    selectedRow.reason = translateForColumns[columnName];
+                    selectedRow.remark = '';
                     busyList.push(selectedRow);
                 }
             }

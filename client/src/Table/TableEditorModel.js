@@ -1,4 +1,4 @@
-import {dateOptions} from '../App';
+import {dateOptions, translateForColumns} from '../App';
 
 const columns = [
   {
@@ -45,14 +45,6 @@ const columns = [
     Header: 'Прочее',
     accessor: 'other',
   }
-]
-
-const urls = [
-  'http://localhost:5000/1kurs',
-  'http://localhost:5000/2kurs',
-  'http://localhost:5000/3kurs',
-  'http://localhost:5000/4kurs',
-  'http://localhost:5000/5kurs',
 ]
 
 // Модель данных для одной таблицы-редактор курса
@@ -105,48 +97,50 @@ class TableEditorModel {
     }
   };
 
+  // Делаем запрос
+  makeRequest = async (url, func) => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Network response was not ok: ${response.status}`);
+      }
+      func(await response.json());
+    } catch (error) {
+      console.error('There has been a problem with your fetch operation:', error);
+    };
+
+  }
+
   // Загружаем данные с сервера
   loadData = async () => {
-    try {
-      const response = await fetch(`http://localhost:5000/manList?course=${this.numberOfCourse}`);
-      if (!response.ok)
-        throw new Error(`Network response was not ok: ${response.status}`);
-      this.manList = await response.json();
-    } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
-    };
-
-    try {
-      const response = await fetch(`http://localhost:5000/busyList?course=${this.numberOfCourse}`);
-      if (!response.ok)
-        throw new Error('Network response was not ok');
-      const parsedResponse = await response.json();
-      this.savedDate = parsedResponse.date;
-      this.savedName = parsedResponse.name;
-      this.savedRank = parsedResponse.rank;
-    } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
-    };
-
-    try {
-      const response = await fetch(`http://localhost:5000/sick?course=${this.numberOfCourse}`);
-      if (!response.ok)
-        throw new Error('Network response was not ok');
-      const sicks = await response.json();
-      
-      for (let i = 0; i < this.data.length; ++i) {
-        const groupNumber = this.data[i].groupNumber;
-        
-        this.data[i].hospital += sicks[groupNumber]?.hospital?.length || 0;
-        this.manListBusy[i].columns.hospital.push(...(sicks[groupNumber]?.hospital?.map(sick => sick['Личный номер']) || []))
-        this.data[i].have -= this.data[i].hospital;
-        this.data[i].lazaret += sicks[groupNumber]?.lazaret?.length || 0;
-        this.manListBusy[i].columns.lazaret.push(...(sicks[groupNumber]?.lazaret?.map(sick => sick['Личный номер']) || []))
-        this.data[i].have -= this.data[i].lazaret;
+    this.makeRequest(`http://localhost:5000/manList?course=${this.numberOfCourse}`,
+      (result) => {
+        this.manList = result;
       }
-    } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
-    };
+    );
+    
+    this.makeRequest(`http://localhost:5000/busyList?course=${this.numberOfCourse}`,
+      (result) => {
+        this.savedDate = result.date;
+        this.savedName = result.name;
+        this.savedRank = result.rank;
+      }
+    );
+
+    this.makeRequest(`http://localhost:5000/sick?course=${this.numberOfCourse}`,
+      (sicks) => {
+        for (let i = 0; i < this.data.length; ++i) {
+          const groupNumber = this.data[i].groupNumber;
+          
+          this.data[i].hospital += sicks[groupNumber]?.hospital?.length || 0;
+          this.manListBusy[i].columns.hospital.push(...(sicks[groupNumber]?.hospital?.map(sick => sick['Личный номер']) || []))
+          this.data[i].have -= this.data[i].hospital;
+          this.data[i].lazaret += sicks[groupNumber]?.lazaret?.length || 0;
+          this.manListBusy[i].columns.lazaret.push(...(sicks[groupNumber]?.lazaret?.map(sick => sick['Личный номер']) || []))
+          this.data[i].have -= this.data[i].lazaret;
+        }
+      }
+    );
   }
   
   // Устанавливаем
@@ -176,11 +170,11 @@ class TableEditorModel {
             continue;
           listOfAbsent.push({
             number: i,
-            course: this.numberOfCourse,
+            group: group.groupNumber,
             rank: busyMan['Воинское звание'],
             name: busyMan['ФИО'],
-            reason: columnName,
-            remark: 'пока пусто',
+            reason: translateForColumns[columnName],
+            remark: '',
           });
           ++i;
         }

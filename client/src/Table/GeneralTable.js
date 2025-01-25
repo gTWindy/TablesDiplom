@@ -138,11 +138,43 @@ const GeneralTable = () => {
                 onClick={() => console.log('grpd-table btn-sv clicked')}
               >
                 Утвердить
-              </button>
-            </div>
-            <PeopleList peopleList={busyList}>
-            </PeopleList>
-        </>
+          </button>
+        </div>
+        <PeopleList props={{
+          columns: [
+            {
+              Header: '№ п/п',
+              accessor: 'number',// порядковый номер
+            },
+            {
+              Header: 'Курс',
+              accessor: 'course',
+            },
+            {
+              Header: 'Звание',
+              accessor: 'rank',
+            },
+            {
+              Header: 'ФИО',
+              accessor: 'name',
+            },
+            {
+              Header: 'Причина отсутствия',
+              accessor: 'reason',
+            },
+            {
+              Header: 'Примечание',
+              accessor: 'remark',
+            },
+            {
+              Header: 'Телефон',
+              accessor: 'phone',
+            },
+          ],
+          peopleList: busyList
+        }}>
+        </PeopleList >
+      </>
     );
 }
 

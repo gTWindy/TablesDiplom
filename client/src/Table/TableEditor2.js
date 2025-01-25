@@ -154,7 +154,40 @@ const EditTable2 = ({groups}) => {
                     Утвердить
                 </button>
             </div>
-            <PeopleList peopleList={tableModel?.getBusyManListForTable() || []}>
+            <PeopleList props={{
+                    columns: [
+                        {
+                            Header: '№ п/п',
+                            accessor: 'number',// порядковый номер
+                        },
+                        {
+                            Header: 'Подразделение',
+                            accessor: 'group',
+                        },
+                        {
+                            Header: 'Звание',
+                            accessor: 'rank',
+                        },
+                        {
+                            Header: 'ФИО',
+                            accessor: 'name',
+                        },
+                        {
+                            Header: 'Причина отсутствия',
+                            accessor: 'reason',
+                        },
+                        {
+                            Header: 'Примечание',
+                            accessor: 'remark',
+                        },
+                        {
+                            Header: 'Телефон',
+                            accessor: 'phone',
+                        },
+
+                    ],
+                    peopleList: tableModel?.getBusyManListForTable() || []
+            }}>
             </PeopleList>
             {chooseManOpen &&
                 <ChooseManEdit

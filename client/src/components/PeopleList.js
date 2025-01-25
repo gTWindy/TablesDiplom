@@ -30,7 +30,7 @@ const columns = [
     },
 ];
 
-const PeopleList = ({ peopleList }) => {
+const PeopleList = ({ props }) => {
     const {
         getTableProps,
         getTableBodyProps,
@@ -38,8 +38,8 @@ const PeopleList = ({ peopleList }) => {
         rows,
         prepareRow,
     } = useTable({
-        columns: columns,
-        data: peopleList,
+        columns: props.columns,
+        data: props.peopleList,
     });
 
     return (
