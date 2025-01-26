@@ -232,6 +232,16 @@ class DB {
         });
     }
 
+    // Удалить все записи о занятых для определенного курса
+    async clearBusyTable(numberOfCourse) {
+        const sql = `
+        DELETE FROM busy
+        WHERE id in (select id from cadets
+        WHERE course = :numberOfCourse)
+        `;
+        return this.run(sql, [numberOfCourse]);
+    }
+
     // Вставить занятого курсанта в таблицу
     async insertOrUpdateBusyTable(id, type) {
         const sql = `INSERT INTO busy (id, type)

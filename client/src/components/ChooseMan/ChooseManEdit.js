@@ -51,26 +51,24 @@ const ChooseManEdit = ({x, y, isOpen, items, selectedItems, handleCloseModal}) =
         //contentLabel="Example Modal"
       >
             <div
-            className="modal" 
+                className="modal"
             >
                 <div className="modal-content">
                     <h2>Список</h2>
                     <ul>
-                        <li> 5112
-                            <ul>
-                                {items.map(
-                                        (item, index) =>
-                                            selectedItemIds.includes(item["Личный номер"]) ?
-                                            <li>
-                                                <div className="choose_man-item_selected" onClick={(event) => onItemClick(event, index) }>{item.ФИО}</div>
-                                            </li>
-                                            :
-                                            <li>
-                                                <div className="choose_man-item" onClick={(event) => onItemClick(event, index) }>{item.ФИО}</div>
-                                            </li>
-                                    )}
-                            </ul>
-                        </li>
+                        <ul>
+                            {items.map(
+                                (item, index) =>
+                                    selectedItemIds.includes(item["Личный номер"]) ?
+                                        <li>
+                                            <div className="choose_man-item_selected" onClick={(event) => onItemClick(event, index)}>{item.ФИО}</div>
+                                        </li>
+                                        :
+                                        <li>
+                                            <div className="choose_man-item" onClick={(event) => onItemClick(event, index)}>{item.ФИО}</div>
+                                        </li>
+                            )}
+                        </ul>
                     </ul>
                     <button 
                         onClick={() => closeModal()}

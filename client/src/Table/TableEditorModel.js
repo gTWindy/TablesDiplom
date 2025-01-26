@@ -1,4 +1,5 @@
 import {dateOptions, translateForColumns} from '../App';
+import { observable, action } from "mobx";
 
 const columns = [
   {
@@ -67,6 +68,10 @@ class TableEditorModel {
   data = [];
 
   constructor(numbersOfGroup) {
+    // Делаем массив data наблюдаемым
+    this.data = observable([]);
+    this.setBusyManListAction = action(this.setBusyManList.bind(this));
+
     this.numbersOfGroups = numbersOfGroup;
     this.numberOfCourse = Math.floor(this.numbersOfGroups[0] / 1000);
     for (let i = 0; i < numbersOfGroup.length; ++i) {
@@ -95,6 +100,19 @@ class TableEditorModel {
         }
       })
     }
+    // Добавляем последнюю строку "всего"
+    this.data.push({
+      list: 50,
+      groupNumber: 'Всего',
+      have: 50,
+      service: 0,
+      lazaret: 0,
+      hospital: 0,
+      trip: 0, 
+      vacation: 0,
+      dismissal: 0,
+      other: 0,
+    });
   };
 
   // Делаем запрос
@@ -124,22 +142,31 @@ class TableEditorModel {
         this.savedDate = result.date;
         this.savedName = result.name;
         this.savedRank = result.rank;
-        for (let row = 0; row < this.data.length; ++row) {
-          const groupNumber = this.data[row].groupNumber;//.toString();
+        for (let row = 0; row < 5; ++row) {
+          const groupNumber = this.data[row].groupNumber;
           
           result[groupNumber].forEach( (man) => {
             this.manListBusy[row].columns[man.type].push(man.id);
             this.data[row][man.type] += 1;
-            this.data[row].have -= 1;  
+            this.data[row].have -= 1;
+            // Последняя строка "Всего"
+            this.data[5][man.type] += 1;
+            this.data[5].have -= 1;
           })
         }
       }
     );
   }
-  
-  // Устанавливаем
+  // Устанавливаем новый список занятых
   setBusyManList = (row, columnName, ides) => {
     this.manListBusy[row].columns[columnName] = ides;
+    // Обновление столбца "на лицо" и последней строки
+    const diff = ides.length - this.data[row][columnName];
+    this.data[row]['have'] -= diff;
+    this.data[row][columnName] = ides.length;
+    // Обновление последней строки
+    this.data[5]['have'] -= diff;
+    this.data[5][columnName] += diff;
   }
 
   // Получаем список занятых людей

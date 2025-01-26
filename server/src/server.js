@@ -131,13 +131,14 @@ app.get('/manList', (req, res) => {
     }
 });
 
-app.post('/busyList', (req, res) => {
+app.post('/busyList', async (req, res) => {
     // Доступ к данным формы
     const formData = req.body;
 
     // Номер курса
     const numberOfCourse = formData.numberOfCourse;
-
+    // Сначала очищаем старые записи
+    await db.clearBusyTable(numberOfCourse);
     // Вставляем занятых в бд
     for (const group of formData.people) {
         for (let columnName in group.columns) {

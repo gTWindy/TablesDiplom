@@ -8,9 +8,9 @@ import { useEffect } from 'react';
 
 import { columns } from '../Table/TableEditorModel';
 import PeopleList from '../components/PeopleList';
+import { observer } from "mobx-react-lite";
 
-
-const EditTable2 = ({groups}) => {
+const EditTable2 = observer(({groups}) => {
     // Создаем состояние для хранения экземпляра модели
     const [tableModel, setTableModel] = useState(null);
     const [chooseManOpen, setChooseManOpen] = useState(false);
@@ -20,6 +20,8 @@ const EditTable2 = ({groups}) => {
     const nameInput = useRef(null);
     // Ввод звания
     const rankInput = useRef(null);
+    // Признак наличия несохраненных изменений
+    const [needSave, setNeedSave] = useState(false);
 
 
     // Создаем экземпляр модели только один раз при монтировании компонента
@@ -33,30 +35,18 @@ const EditTable2 = ({groups}) => {
         createAndLoadModel();
     }, []);
 
+    // Обрабатываем закрытия модального окна
     const onCloseModal = (idesMan) => {
         console.log(idesMan);
-        tableModel.setBusyManList(clickedCell.row, clickedCell.column, idesMan);
-        updateCellValue(clickedCell.row, clickedCell.column, idesMan.length);
+        tableModel.setBusyManListAction(clickedCell.row, clickedCell.column, idesMan);
+        setNeedSave(true);
     }
-
-    const updateCellValue = (rowIndex, columnId, newValue) => {
-        // Логика обработки клика и получения нового значения
-        console.log(`Clicked on cell at row ${rowIndex}, column ${columnId}`);
-        // Копируем данные
-        const updatedData = [...tableModel.data];
-        // Обновление данных
-        updatedData[rowIndex]['have'] = updatedData[rowIndex][columnId] ? updatedData[rowIndex]['have'] - newValue + updatedData[rowIndex][columnId] : updatedData[rowIndex]['have'] - newValue ;
-        updatedData[rowIndex][columnId] = newValue;
-        
-        tableModel.data = updatedData;
-        // Сохраняем обновленные данные
-        setTableModel(tableModel);
-    };
     
     // Нажатие кнопки сохранить
     const onButtonSaveClicked = async () => {
         tableModel?.setSavedName(nameInput.current.value);
         tableModel?.setSavedRank(rankInput.current.value);
+        setNeedSave(false);
         await tableModel.sendBusyListToServer();
     };   
 
@@ -68,6 +58,13 @@ const EditTable2 = ({groups}) => {
         columns.map(column => ({
             ...column,
             Cell: ({ value, row, column: { id } }) => {
+                // Добавляем порядковый номер строки, если это первый столбец
+                if (id === 'number')
+                    return row.index + 1;
+                // Если последняя строка т.е. строка "Всего"
+                if (row.index === 5) {
+                    return <span>{value}</span>;
+                }
                 // Если столбец для редактирования
                 if (editableColumnIds.includes(id)) {
                     return (
@@ -84,9 +81,7 @@ const EditTable2 = ({groups}) => {
                         {value}
                     </div>
                         );
-                } else if (id === 'number')
-                    return row.index + 1; // Добавляем порядковый номер строки
-                else
+                } else
                     return <span>{value}</span>; // Для остальных столбцов выводим обычное значение
                 },
             })),
@@ -101,7 +96,7 @@ const EditTable2 = ({groups}) => {
         prepareRow,
     } = useTable({
         columns: memoizedColumns,
-        data: tableModel ? tableModel.data : [],
+        data: tableModel ? [...tableModel.data] : [],
     });
 
     return (
@@ -150,6 +145,7 @@ const EditTable2 = ({groups}) => {
 
                 <button
                     onClick={() => onButtonSaveClicked()}
+                    disabled={!needSave}
                 >
                     Утвердить
                 </button>
@@ -204,6 +200,6 @@ const EditTable2 = ({groups}) => {
             }
     </>
   );
-}
+});
 
 export default EditTable2;
