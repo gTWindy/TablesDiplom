@@ -85,7 +85,9 @@ class DB {
         const sql = `
             CREATE TABLE IF NOT EXISTS sick (
                 id TEXT REFERENCES cadets(id) PRIMARY KEY,
-                type TEXT CHECK(type IN ("lazaret", "hospital"))
+                type TEXT CHECK(type IN ("lazaret", "hospital")),
+                date DATE,
+                diagnosis TEXT
             );
         `;
         
@@ -205,16 +207,81 @@ class DB {
         });
     }
 
-    // Вставить запись о сохранении
-    async insertRowInSaveTable(numberOfCourse, date, name, rank) {
-        const sql = `INSERT INTO saves (course, date, name, rank)
-                    VALUES (:numberOfCourse, :date, :name, :rank)
-                    ON CONFLICT(course) DO UPDATE SET
-                        date = EXCLUDED.date,
-                        name = EXCLUDED.name,
-                        rank = EXCLUDED.rank;
-                        `;
-        return this.run(sql, [numberOfCourse, date, name, rank]);
+    // Удалить все записи о занятых для определенного курса
+    async clearBusyTable(numberOfCourse) {
+        const sql = `
+        DELETE FROM busy
+        WHERE id in (select id from cadets
+        WHERE course = :numberOfCourse)
+        `;
+        return this.run(sql, [numberOfCourse]);
+    }
+
+    async removeFromBusyTableById(id) {
+        const sql = `
+        DELETE FROM busy
+        WHERE id = :id)
+        `;
+        return this.run(sql, [id]);
+    }
+
+    // Вставить занятого курсанта в таблицу
+    async insertOrUpdateBusyTable(id, type) {
+        const sql = `INSERT INTO busy (id, type)
+                    VALUES (:id, :type)
+                    ON CONFLICT(id) DO UPDATE SET
+                        type = EXCLUDED.type;`;
+        return this.run(sql, [id, type]);
+    }
+
+    // Взять список занятых из группы
+    async selectByGroupFromBusyTable(groupNumber) {
+        const sql = `SELECT * FROM busy WHERE id in (SELECT id from cadets WHERE "group" == ?)`;
+        return new Promise((resolve, reject) => {
+            this.db.all(sql, [groupNumber], (err, rows) => {
+                if (err) {
+                    console.error(err.message);
+                    reject(err);
+                } else {
+                    console.log(`Selected by group ${groupNumber}:`);
+                    resolve(rows); // Возвращаем строчки
+                }
+            });
+        });
+    }
+
+    // Взять список всех больных
+    async selectAllFromSickTable() {
+        const sql = `SELECT * FROM sick`;
+        return new Promise((resolve, reject) => {
+            this.db.all(sql, [], (err, rows) => {
+                if (err) {
+                    console.error(err.message);
+                    reject(err);
+                } else {
+                    console.log(`Selected all rows from sick table`);
+                    // Возвращаем строчки
+                    resolve(rows);
+                }
+            });
+        });
+    }
+
+    // Вставить больного курсанта в таблицу
+    async insertOrUpdateSickTable(id, medInstitution, date, diagnosis) {
+        const sql = `INSERT INTO sick (id, type, date, diagnosis)
+                    VALUES (:id, :medInstitution, :date, :diagnosis)
+                    ON CONFLICT(id) DO UPDATE SET
+                        type = EXCLUDED.medInstitution;`;
+        return this.run(sql, [id, medInstitution, date, diagnosis]);
+    }
+    
+    async removeFromSickTableById(id) {
+        const sql = `
+        DELETE FROM sick
+        WHERE id = :id)
+        `;
+        return this.run(sql, [id]);
     }
 
     async selectSaveRowByCourse(course) {
@@ -232,41 +299,21 @@ class DB {
         });
     }
 
-    // Удалить все записи о занятых для определенного курса
-    async clearBusyTable(numberOfCourse) {
-        const sql = `
-        DELETE FROM busy
-        WHERE id in (select id from cadets
-        WHERE course = :numberOfCourse)
-        `;
-        return this.run(sql, [numberOfCourse]);
+    // Вставить запись о сохранении
+    async insertRowInSaveTable(numberOfCourse, date, name, rank) {
+        const sql = `INSERT INTO saves (course, date, name, rank)
+                    VALUES (:numberOfCourse, :date, :name, :rank)
+                    ON CONFLICT(course) DO UPDATE SET
+                        date = EXCLUDED.date,
+                        name = EXCLUDED.name,
+                        rank = EXCLUDED.rank;
+                        `;
+        return this.run(sql, [numberOfCourse, date, name, rank]);
     }
 
-    // Вставить занятого курсанта в таблицу
-    async insertOrUpdateBusyTable(id, type) {
-        const sql = `INSERT INTO busy (id, type)
-                    VALUES (:id, :type)
-                    ON CONFLICT(id) DO UPDATE SET
-                        type = EXCLUDED.type;`;
-        return new Promise((resolve, reject) => {
-            return this.run(sql, [id, type]);
-        });
-    }
-
-    // Взять список занятых из группы
-    async selectByGroupFromBusyTable(groupNumber) {
-        const sql = `SELECT * FROM busy WHERE id in (SELECT id from cadets WHERE "group" == ?)`;
-        return new Promise((resolve, reject) => {
-            this.db.all(sql, [groupNumber], (err, rows) => { // Используем db.get для одного результата
-                if (err) {
-                    console.error(err.message);
-                    reject(err);
-                } else {
-                    console.log(`Selected by group ${groupNumber}:`);
-                    resolve(rows); // Возвращаем строчки
-                }
-            });
-        });
+    async removeSaveRowByCourse(course) {
+        const sql = `DELETE FROM saves WHERE course = ?`;
+        return this.run(sql, [course]);
     }
 }
 
