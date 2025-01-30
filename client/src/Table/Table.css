@@ -1,8 +1,15 @@
 /* Table.css */
 
+.table_header {
+  display: flex;
+  justify-content: center;
+}
+
 .styled-table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  max-width: 90vw;
+  margin-left: 5vw;
+  border-collapse: collapse;
 }
 
 .styled-table th, .styled-table td {
@@ -12,47 +19,63 @@
 }
 
 .styled-table th {
-    background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
-.styled-table tr:hover {
-    background-color: #f5f5f5;
+td {
+  width: 9vw;
+  height: 3vw;
 }
 
 .cell-input {
-    display: block;
-    border: none;
-    outline: none;
-    height: 100%;
-    padding: 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  height: 100%;
+  min-width: 100%;
+  padding: 0;
 }
 
-.table-container{
-    display: block;
-    height: 100vw;
+.med_table-container{
+  margin-top: 1vw;
+}
+
+.undertable_block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 5vw;
+  margin-top: 1vw;
+  margin-bottom: 1vw;
+}
+
+.table_of_absent {
+  margin-bottom: 3vw;
 }
 
 .context-menu {
-    position: absolute;
-    display: none;
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 10px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-  }
-  
-  .context-menu ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .context-menu li {
-    cursor: pointer;
-    padding: 5px 10px;
-  }
-  
-  .context-menu li:hover {
-    background-color: #f0f0f0;
-  }
+  position: absolute;
+  display: none;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.context-menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context-menu li {
+  cursor: pointer;
+  padding: 5px 10px;
+}
+
+.context-menu li:hover {
+  background-color: #f0f0f0;
+}

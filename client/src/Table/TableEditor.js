@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import './Table.css';
 
-const EditTable = () => {
+const EditTable = ({numberOfCourse}) => {
     // Инициализируем состояние для 8 строк и 10 столбцов
     const initialRows = Array.from({ length: 8 }, (_, rowIndex) => 
         Array.from({ length: 8 }, (_, colIndex) => ({
@@ -17,7 +17,6 @@ const EditTable = () => {
 
     const handleChange = (rowId, colId, newValue) => {
         if (newValue !== "") {
-        
             const newNumber = Number(newValue);
             if (!newNumber)
                 return;
@@ -26,10 +25,14 @@ const EditTable = () => {
         }
         
         const updatedRows = rows.map((row, rIndex) => {
-            if (rIndex !== rowId) return row; // Если строка не та, которую мы ищем, возвращаем её без изменений
+            // Если строка не та, которую мы ищем, возвращаем её без изменений
+            if (rIndex !== rowId) 
+                return row;
     
             return row.map((cell, cIndex) => {
-                if (cIndex !== colId) return cell; // Если колонка не та, которую мы ищем, возвращаем её без изменений
+                // Если колонка не та, которую мы ищем, возвращаем её без изменений
+                if (cIndex !== colId) 
+                    return cell;
     
                 return { ...cell, value: newValue }; // Обновляем значение нужной ячейки
             });
