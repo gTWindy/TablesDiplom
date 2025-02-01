@@ -1,53 +1,6 @@
 import {dateOptions, translateForColumns} from '../App';
 import { observable, action } from "mobx";
 
-const columns = [
-  {
-    Header: 'N п/п',
-    accessor: 'number',// accessor is the "key" in the data
-  },
-  {
-    Header: 'Подразделение',
-    accessor: 'groupNumber',// accessor is the "key" in the data
-  },
-  {
-    Header: 'По списку',
-    accessor: 'list',
-  },
-  {
-    Header: 'На лицо',
-    accessor: 'have',
-  },
-  {
-    Header: 'Наряд',
-    accessor: 'service',
-  },
-  {
-    Header: 'Лазарет',
-    accessor: 'lazaret',
-  },
-  {
-    Header: 'Госпиталь',
-    accessor: 'hospital',
-  },
-  {
-    Header: 'Командировка',
-    accessor: 'trip',
-  },
-  {
-    Header: 'Отпуск',
-    accessor: 'vacation',
-  },
-  {
-    Header: 'Увольнение',
-    accessor: 'dismissal',
-  },
-  {
-    Header: 'Прочее',
-    accessor: 'other',
-  }
-]
-
 // Модель данных для одной таблицы-редактор курса
 class TableEditorModel {
   // Список групп и людей в них
@@ -265,10 +218,8 @@ class TableEditorModel {
   getSavedName = () => {
     return this.savedName;
   }
-
 }
 
 export {
-    columns,
-    TableEditorModel
+  TableEditorModel
 }

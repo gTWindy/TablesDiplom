@@ -1,20 +1,11 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
 import Login from './Login';
-
 import GeneralTable from './Table/GeneralTable';
-// Моя собственная таблица
-import EditTable from './Table/TableEditor';
 // React таблица
 import EditTable2 from './Table/TableEditor2';
-
-
-
 import MedTable from './Table/MedTable/MedTable';
 
-
-// Объект модели таблицы пятого курса 
-let tableModelFifthCourse = null;
 // Настройки отображения даты 
 export const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
 // Перевод колонок
