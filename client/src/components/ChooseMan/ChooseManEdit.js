@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Modal from 'react-modal';
 import './ChooseMan.css';
-const ChooseManEdit = ({x, y, isOpen, items, selectedItems, handleCloseModal}) => {
+const ChooseManEdit = ({isOpen, items, selectedItems, handleCloseModal}) => {
     let [selectedItemIds, setSelectedItemsIds] = useState(selectedItems);
     let [modalIsOpen, setIsOpen] = useState(isOpen);   
 

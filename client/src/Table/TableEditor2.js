@@ -37,6 +37,7 @@ const EditTable2 = observer(({ groups }) => {
     const onCloseModal = (idesMan) => {
         console.log(idesMan);
         tableModel.setBusyManListAction(clickedCell.row, clickedCell.column, idesMan);
+        setChooseManOpen(false);
         setNeedSave(true);
     }
 
@@ -90,15 +91,10 @@ const EditTable2 = observer(({ groups }) => {
             </PeopleList>
             {chooseManOpen &&
                 <ChooseManEdit
-                    x={700}
-                    y={500}
                     isOpen={chooseManOpen}
                     items={tableModel ? tableModel.getManListForChoose(clickedCell.row, clickedCell.column) : []}
                     selectedItems={tableModel ? tableModel.getBusyManList(clickedCell.row, clickedCell.column) : []}
-                    handleCloseModal={(ides) => {
-                        setChooseManOpen(false);
-                        onCloseModal(ides);
-                    }}
+                    handleCloseModal={(ides) => onCloseModal(ides)}
                 />
             }
         </>
