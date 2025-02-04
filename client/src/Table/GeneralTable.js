@@ -6,7 +6,7 @@ import PeopleList from '../components/PeopleList';
 import EditTable from '../components/EditTable';
 import { observer } from "mobx-react-lite";
 import { GeneralTableModel } from './GeneralTableModel';
-import ChooseManEdit from '../components/ChooseMan/ChooseMan';
+import ChooseMan from '../components/ChooseMan/ChooseMan';
 
 const GeneralTable = observer(() => {
   // Создаем состояние для хранения экземпляра модели
@@ -33,6 +33,7 @@ const GeneralTable = observer(() => {
 
   // Обрабатываем закрытия модального окна
   const onCloseModal = (idesMan) => {
+    tableModel.setCheckedMan(clickedCell.row, clickedCell.column, idesMan);
     setChooseManOpen(false);
     setNeedSave(true);
   }
@@ -67,11 +68,13 @@ const GeneralTable = observer(() => {
       }}>
       </PeopleList >
       {chooseManOpen &&
-        <ChooseManEdit
+        <ChooseMan
           isOpen={chooseManOpen}
           items={tableModel?.manList[clickedCell.row] ?? []}
           selectedItems={[]}
           handleCloseModal={(ides) => onCloseModal(ides)}
+          isCheckable={true}
+          checkedKeys={tableModel?.getCheckedMan(clickedCell.row, clickedCell.column) ?? []}
         />
       }
     </>

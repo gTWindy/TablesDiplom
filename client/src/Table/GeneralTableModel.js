@@ -3,10 +3,6 @@ import { observable, action } from "mobx";
 
 // Модель данных для одной таблицы-редактор курса
 class GeneralTableModel {
-    // Список групп
-    numbersOfGroups = [];
-    // Номер курса
-    numberOfCourse = -1;
     // Дата, сохраненных данных
     savedDate = '';
     // Сохраненное имя
@@ -19,6 +15,8 @@ class GeneralTableModel {
     busyList = [];
     // Список групп и людей в них
     manList = [];
+    // Массив id занятых людей
+    idOfCheckedMan = []
 
     constructor() {
         this.data = observable([]);
@@ -83,7 +81,25 @@ class GeneralTableModel {
                         })));
                 }
                 this.manList = groupsList;
-            })
+        })
+    }
+
+    setCheckedMan = (numberOfCourse, columnName, idesMan) => {
+        if (!this.idOfCheckedMan[numberOfCourse]) {
+            this.idOfCheckedMan[numberOfCourse] = [];
+        }
+          
+        this.idOfCheckedMan[numberOfCourse][columnName] = idesMan;
+    }
+
+    getCheckedMan = (numberOfCourse, columnName) => {
+        if (!this.idOfCheckedMan[numberOfCourse]) {
+            this.idOfCheckedMan[numberOfCourse] = [];   
+        }
+        if (!this.idOfCheckedMan[numberOfCourse][columnName]) {
+            this.idOfCheckedMan[numberOfCourse][columnName] = [];
+        }
+        return this.idOfCheckedMan[numberOfCourse][columnName];
     }
 }
 
