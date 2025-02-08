@@ -9,13 +9,13 @@ import '../Table.css';
 import './MedTable.css';
 import {dateOptions} from '../../App';
 
-const courseTranslate = {
-    firstCourse: "Первый курс",
-    secondCourse: "Второй курс",
-    thirdCourse: "Третий курс",
-    fourthCourse: "Четвёртый курс",
-    fifthCourse: "Пятый курс",
-}
+const courseTranslate = [
+    "Первый курс",
+    "Второй курс",
+    "Третий курс",
+    "Четвёртый курс",
+    "Пятый курс"
+]
 
 const MedTable = () => {   
     // Строки таблицы

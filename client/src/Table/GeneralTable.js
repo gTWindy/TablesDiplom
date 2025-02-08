@@ -44,7 +44,7 @@ const GeneralTable = observer(() => {
         <h4>РАЗВЕРНУТАЯ СТРОЕВАЯ ЗАПИСКА<br /> на </h4>
       </div>
       <EditTable
-        dataToView={tableModel?.data ?? []}
+        dataToView={tableModel?.getDataForView() ?? []}
         onCellClick={(cell) => {
           setClickedCell(cell);
           setChooseManOpen(true)
@@ -64,13 +64,13 @@ const GeneralTable = observer(() => {
       </div>
       <PeopleList props={{
         isGeneral: true,
-        peopleList: tableModel?.busyList ?? []
+        peopleList: tableModel?.getBusyListForView() ?? []
       }}>
       </PeopleList >
       {chooseManOpen &&
         <ChooseMan
           isOpen={chooseManOpen}
-          items={tableModel?.manList[clickedCell.row] ?? []}
+          items={tableModel?.groupsList[clickedCell.row] ?? []}
           selectedItems={[]}
           handleCloseModal={(ides) => onCloseModal(ides)}
           isCheckable={true}

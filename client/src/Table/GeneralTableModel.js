@@ -9,17 +9,17 @@ class GeneralTableModel {
     savedName = null;
     // Сохраненное звание
     savedRank = null;
-    // Данные для представления в самой таблице
-    data = [];
     // Список отсутствующих людей с полной информацией
     busyList = [];
     // Список групп и людей в них
     manList = [];
+    // Список групп и людей в них в виде узлов дерева
+    groupsList = []
     // Массив id занятых людей
     idOfCheckedMan = []
 
     constructor() {
-        this.data = observable([]);
+        this.idOfCheckedMan = observable([]);
     };
 
     // Делаем запрос
@@ -39,29 +39,11 @@ class GeneralTableModel {
     loadData = async () => {
         await this.makeRequest(`http://localhost:5000/busyList`,
             (loadedData) => {
-                const dataByColumns = loadedData.byColumns;
-                let newData = [];
-                for (let i = 0; i < dataByColumns.length; ++i) {
-                    newData.push({
-                        course: i + 1,
-                        list: 50,
-                        have: 50 - (dataByColumns[i].service.length + dataByColumns[i].lazaret.length + dataByColumns[i].hospital.length +
-                            dataByColumns[i].trip.length + dataByColumns[i].vacation.length + dataByColumns[i].dismissal.length + dataByColumns[i].other.length),
-                        service: dataByColumns[i].service.length,
-                        lazaret: dataByColumns[i].lazaret.length,
-                        hospital: dataByColumns[i].hospital.length,
-                        trip: dataByColumns[i].trip.length,
-                        vacation: dataByColumns[i].vacation.length,
-                        dismissal: dataByColumns[i].dismissal.length,
-                        other: dataByColumns[i].other.length
-                    })
-                }
-                this.data = newData;
-                this.busyList = loadedData.list;
+                this.idOfCheckedMan = loadedData;
             }
         );
 
-        // Загружаем список всех курсантов, для возможности выбора нового больного
+        // Загружаем список всех курсантов, для возможности показа списка
         await this.makeRequest("http://localhost:5000/manList",
             (data) => {
                 let groupsList = [];
@@ -80,8 +62,69 @@ class GeneralTableModel {
                             }))
                         })));
                 }
-                this.manList = groupsList;
+                this.manList = data;
+                this.groupsList = groupsList;
         })
+    }
+
+    getDataForView = () => {
+        const dataByColumns = this.idOfCheckedMan;
+        let newDataForView = [];
+        // Последняя строчка "Всего"
+        let lastRowForView = {
+            course: "Всего",
+            list: 250,
+            have: 250
+        }
+        for (let i = 0; i < dataByColumns.length; ++i) {
+            let newRowForView = {
+                course: i + 1,
+                list: 50,
+            };
+            let summOfAbsent = 0;
+            for (const columnName in dataByColumns[i]) {
+                const busyManCountInColumn = dataByColumns[i][columnName].length;
+                summOfAbsent += busyManCountInColumn;
+                newRowForView[columnName] = busyManCountInColumn;
+                lastRowForView[columnName] ?  lastRowForView[columnName] += busyManCountInColumn : lastRowForView[columnName] = busyManCountInColumn;
+            }
+            newRowForView.have = 50 - summOfAbsent;
+            lastRowForView.have -= summOfAbsent;
+            newDataForView.push(newRowForView);
+        }
+        newDataForView.push(lastRowForView);
+        return newDataForView;
+    }
+
+    getBusyListForView = () => {
+        const dataByColumns = this.idOfCheckedMan;
+        let busyListForView = [];
+        let number = 1;
+        for (let i = 0; i < dataByColumns.length; ++i) {
+            for (const columnName in dataByColumns[i]) {
+                dataByColumns[i][columnName].forEach(idOfBusy => {
+                    for (let groupName in this.manList[i]) {
+                        const info = this.manList[i][groupName].find((man) => man["Личный номер"] == idOfBusy);
+                        if(!info) {
+                            continue;
+                        }
+                        busyListForView.push({
+                            number,
+                            course: i + 1,
+                            rank: info["Воинское звание"],
+                            name: info["ФИО"],
+                            reason: translateForColumns[columnName],
+                            remark: "",
+                            phone: info["Номер телефона"],
+                        });
+                        number++;
+                        }
+                    } 
+                );
+            }
+        }
+
+        return busyListForView;
     }
 
     setCheckedMan = (numberOfCourse, columnName, idesMan) => {
