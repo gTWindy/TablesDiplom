@@ -1,5 +1,5 @@
 import { useTable } from 'react-table';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import '../Table/Table.css';
 import { observer } from "mobx-react-lite";
 
@@ -51,9 +51,6 @@ const columns = [
 ]
 
 const EditTable = observer(({ dataToView, onCellClick, isGeneral }) => {
-    // Для хранения текущей ячейки
-    const [clickedCell, setClickedCell] = useState({ row: null, column: null });
-
     // Идентификаторы редактируемых столбцов
     const editableColumnIds = ['service', 'trip', 'vacation', 'dismissal', 'other'];
 

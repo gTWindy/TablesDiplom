@@ -213,21 +213,21 @@ const MedTable = () => {
                                     <td>
                                         <input className='cell-input'
                                                 type="text"
-                                                value={row.diagnosis}
+                                                value={row.diagnosis || ""}
                                                 onChange={(e) => handleChange(rowIndex, "diagnosis", e.target.value)}
                                         />
                                     </td>
                                     <td>
                                         <input className='cell-input'
                                                 type="text"
-                                                value={row.date}
+                                                value={row.date || ""}
                                                 onChange={(e) => handleChange(rowIndex, "date", e.target.value)}
                                         />
                                     </td>
                                     <td>
                                         <input className='cell-input'
                                                 type="text"
-                                                value={row["k/l"]}
+                                                value={row["k/l"] || ""}
                                                 onChange={(e) => handleChange(rowIndex, "k/l", e.target.value)}
                                         />
                             </td>
