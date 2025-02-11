@@ -1,8 +1,9 @@
 import { dateOptions, translateForColumns } from '../App';
 import { observable, action } from "mobx";
+import { BaseTableModel } from './BaseTableModel';
 
 // Модель данных для одной таблицы-редактор курса
-class GeneralTableModel {
+class GeneralTableModel extends BaseTableModel {
     // Дата, сохраненных данных
     savedDate = '';
     // Сохраненное имя
@@ -19,21 +20,10 @@ class GeneralTableModel {
     idOfCheckedMan = []
 
     constructor() {
+        super();
+
         this.idOfCheckedMan = observable([]);
     };
-
-    // Делаем запрос
-    makeRequest = async (url, func) => {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
-            func(await response.json());
-        } catch (error) {
-            console.error('There has been a problem with your fetch operation:', error);
-        };
-    }
 
     // Загружаем данные с сервера
     loadData = async () => {
@@ -143,6 +133,30 @@ class GeneralTableModel {
             this.idOfCheckedMan[numberOfCourse][columnName] = [];
         }
         return this.idOfCheckedMan[numberOfCourse][columnName];
+    }
+
+    // Возвращаем список людей выбранной группы, которые не заняты
+    getManListForChoose = (row, columnName) => {
+        if (row === null)
+            return [];
+        // Список людей этой группы занятые 
+        let busyPeople = [];
+         // создаем копию объекта columns
+        const columnsCopy = { ...this.idOfCheckedMan[row] };
+        // удаляем указанное свойство из копии
+        delete columnsCopy[columnName];
+        // Объединяем все оставшиеся массивы в один
+        busyPeople.push(Object.values(columnsCopy).flat());
+        busyPeople = busyPeople.flat();
+
+        const copy =  this.groupsList[row].map((group) => {
+            group.children = group.children.filter((person) => {
+                return !busyPeople.includes(person.key);
+            });
+            return group;
+        });
+
+        return copy.filter(group => group.children.length);
     }
 }
 

@@ -1,8 +1,9 @@
 import {dateOptions, translateForColumns} from '../App';
 import { observable, action } from "mobx";
+import { BaseTableModel } from './BaseTableModel';
 
 // Модель данных для одной таблицы-редактор курса
-class TableEditorModel {
+class TableEditorModel extends BaseTableModel{
   // Список групп и людей в них
   manList = [];
   // Список людей по группам, которые уже заняты (болеют, в наряде и т.д.)
@@ -21,6 +22,8 @@ class TableEditorModel {
   data = [];
 
   constructor(numbersOfGroup) {
+    super();
+
     // Делаем массив data наблюдаемым
     this.data = observable([]);
     this.setBusyManListAction = action(this.setBusyManList.bind(this));
@@ -67,20 +70,6 @@ class TableEditorModel {
       other: 0,
     });
   };
-
-  // Делаем запрос
-  makeRequest = async (url, func) => {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.status}`);
-      }
-      func(await response.json());
-    } catch (error) {
-      console.error('There has been a problem with your fetch operation:', error);
-    };
-
-  }
 
   // Загружаем данные с сервера
   loadData = async () => {
@@ -198,25 +187,6 @@ class TableEditorModel {
     } catch (error) {
       console.error('Ошибка:', error);
     }
-  }
-
-  // Устанавливаем новое звание
-  setSavedRank = (newRank) => {
-    this.savedRank = newRank;
-  }
-  // Возвращаем сохраненное звание
-  getSavedRank = () => {
-    return this.savedRank;
-  }
-
-  // Устанавливаем новое имя
-  setSavedName = (newName) => {
-    this.savedName = newName;
-  }
-
-  // Возвращаем сохраненное имя
-  getSavedName = () => {
-    return this.savedName;
   }
 }
 

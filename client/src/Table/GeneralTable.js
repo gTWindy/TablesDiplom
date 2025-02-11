@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import PeopleList from '../components/PeopleList';
 import EditTable from '../components/EditTable';
 import { observer } from "mobx-react-lite";
-import { GeneralTableModel } from './GeneralTableModel';
+import { GeneralTableModel } from '../models/GeneralTableModel';
 import ChooseMan from '../components/ChooseMan/ChooseMan';
 
 const GeneralTable = observer(() => {
@@ -70,7 +70,7 @@ const GeneralTable = observer(() => {
       {chooseManOpen &&
         <ChooseMan
           isOpen={chooseManOpen}
-          items={tableModel?.groupsList[clickedCell.row] ?? []}
+          items={tableModel?.getManListForChoose(clickedCell.row, clickedCell.column) ?? []}
           selectedItems={[]}
           handleCloseModal={(ides) => onCloseModal(ides)}
           isCheckable={true}

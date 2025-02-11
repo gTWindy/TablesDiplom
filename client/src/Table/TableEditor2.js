@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from 'react';
 
 import ChooseManEdit from '../components/ChooseMan/ChooseManEdit';
-import { TableEditorModel } from './TableEditorModel'
+import { TableEditorModel } from '../models/TableEditorModel'
 import './Table.css';
 import { useEffect } from 'react';
 import PeopleList from '../components/PeopleList';
