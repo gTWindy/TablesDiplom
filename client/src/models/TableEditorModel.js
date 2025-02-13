@@ -6,8 +6,6 @@ import { BaseTableModel } from './BaseTableModel';
 class TableEditorModel extends BaseTableModel{
   // Список групп и людей в них
   manList = [];
-  // Список людей по группам, которые уже заняты (болеют, в наряде и т.д.)
-  manListBusy = [];
   // Список групп
   numbersOfGroups = [];
   // Номер курса
@@ -44,8 +42,6 @@ class TableEditorModel extends BaseTableModel{
         other: 0,
       });
       this.manListBusy.push({
-        groupNumber: numbersOfGroup[i],
-        columns: {
           service: [],
           lazaret: [],
           hospital: [],
@@ -53,7 +49,6 @@ class TableEditorModel extends BaseTableModel{
           vacation: [],
           dismissal: [],
           other: []
-        }
       })
     }
     // Добавляем последнюю строку "всего"
@@ -88,7 +83,7 @@ class TableEditorModel extends BaseTableModel{
           const groupNumber = this.data[row].groupNumber;
           
           result[groupNumber].forEach( (man) => {
-            this.manListBusy[row].columns[man.type].push(man.id);
+            this.manListBusy[row][man.type].push(man.id);
             this.data[row][man.type] += 1;
             this.data[row].have -= 1;
             // Последняя строка "Всего"
@@ -99,9 +94,10 @@ class TableEditorModel extends BaseTableModel{
       }
     );
   }
+
   // Устанавливаем новый список занятых
   setBusyManList = (row, columnName, ides) => {
-    this.manListBusy[row].columns[columnName] = ides;
+    this.manListBusy[row][columnName] = ides;
     // Обновление столбца "на лицо" и последней строки
     const diff = ides.length - this.data[row][columnName];
     this.data[row]['have'] -= diff;
@@ -111,29 +107,23 @@ class TableEditorModel extends BaseTableModel{
     this.data[5][columnName] += diff;
   }
 
-  // Получаем список занятых людей
-  getBusyManList = (row = -1, columnName) => {
-    if (row === -1)
-      return this.manListBusy;
-    return this.manListBusy[row].columns[columnName];
-  }
-
   // Получаем список занятых людей для представления в таблице отсутствующих
   getBusyManListForTable = () => {
     let listOfAbsent = [];
     // Порядковый номер.
     let i = 1;
-    for (let group of this.manListBusy) {
-      for (let columnName of Object.keys(group.columns)) {
-        for (let id of group.columns[columnName]) {
-          const busyMan = this.manList[group.groupNumber].find((man) => {
+    for (let row = 0; row < this.manListBusy.length; row++) {
+      const groupNumber = this.numbersOfGroups[row];
+      for (const columnName of Object.keys(this.manListBusy[row])) {
+        for (const id of this.manListBusy[row][columnName]) {
+          const busyMan = this.manList[groupNumber].find((man) => {
             return man['Личный номер'] === id;
           });
           if (!busyMan)
             continue;
           listOfAbsent.push({
             number: i,
-            group: group.groupNumber,
+            group: groupNumber,
             rank: busyMan['Воинское звание'],
             name: busyMan['ФИО'],
             reason: translateForColumns[columnName],
@@ -148,15 +138,7 @@ class TableEditorModel extends BaseTableModel{
 
   // Возвращаем список людей выбранной группы, которые не заняты
   getManListForChoose = (row, columnName) => {
-    if (row === null)
-      return [];
-    let busyPeople = [];
-    // Список людей этой группы занятые 
-    const columnsCopy = { ...this.manListBusy[row].columns }; // создаем копию объекта columns
-    delete columnsCopy[columnName]; // удаляем указанное свойство из копии
-    // Объединяем все оставшиеся массивы в один
-    busyPeople.push(Object.values(columnsCopy).flat());
-    busyPeople = busyPeople.flat();
+    const busyPeople = this.getBusyManListFromOtherColumns(row, columnName);
     // Номер группы
     const groupName = this.numbersOfGroups[row];
     

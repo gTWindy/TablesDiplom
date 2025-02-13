@@ -8,7 +8,9 @@ class BaseTableModel {
     savedName = null;
     // Сохраненное звание
     savedRank = null;
-    // Список занятых людей
+    // Список id людей по строкам, которые уже заняты (болеют, в наряде и т.д.)
+    manListBusy = [];
+
     constructor() {
     };
 
@@ -67,6 +69,28 @@ class BaseTableModel {
         } catch (error) {
             console.error('Ошибка:', error);
         }
+    }
+
+    // Получаем список id занятых людей
+    getBusyManIdList = (row = -1, columnName) => {
+        if (row === -1)
+        return this.manListBusy;
+        return this.manListBusy[row][columnName];
+    }
+
+    // Возвращает список людей из данной строки, которые уже заняты в других столбцах
+    getBusyManListFromOtherColumns = (row, columnName) => {
+        if (row === null)
+            return [];
+        // Список людей этой группы занятые 
+        let busyPeople = [];
+         // создаем копию объекта columns
+        const columnsCopy = { ...this.manListBusy[row] };
+        // удаляем указанное свойство из копии
+        delete columnsCopy[columnName];
+        // Объединяем все оставшиеся массивы в один
+        busyPeople.push(Object.values(columnsCopy).flat());
+        return busyPeople.flat();
     }
 }
 

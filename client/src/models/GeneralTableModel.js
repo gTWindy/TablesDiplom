@@ -5,7 +5,7 @@ import { BaseTableModel } from './BaseTableModel';
 // Модель данных для одной таблицы-редактор курса
 class GeneralTableModel extends BaseTableModel {
     // Дата, сохраненных данных
-    savedDate = '';
+    savedDate = "";
     // Сохраненное имя
     savedName = null;
     // Сохраненное звание
@@ -16,20 +16,18 @@ class GeneralTableModel extends BaseTableModel {
     manList = [];
     // Список групп и людей в них в виде узлов дерева
     groupsList = []
-    // Массив id занятых людей
-    idOfCheckedMan = []
 
     constructor() {
         super();
 
-        this.idOfCheckedMan = observable([]);
+        this.manListBusy = observable([]);
     };
 
     // Загружаем данные с сервера
     loadData = async () => {
         await this.makeRequest(`http://localhost:5000/busyList`,
             (loadedData) => {
-                this.idOfCheckedMan = loadedData;
+                this.manListBusy = loadedData;
             }
         );
 
@@ -58,7 +56,7 @@ class GeneralTableModel extends BaseTableModel {
     }
 
     getDataForView = () => {
-        const dataByColumns = this.idOfCheckedMan;
+        const dataByColumns = this.manListBusy;
         let newDataForView = [];
         // Последняя строчка "Всего"
         let lastRowForView = {
@@ -87,7 +85,7 @@ class GeneralTableModel extends BaseTableModel {
     }
 
     getBusyListForView = () => {
-        const dataByColumns = this.idOfCheckedMan;
+        const dataByColumns = this.manListBusy;
         let busyListForView = [];
         let number = 1;
         for (let i = 0; i < dataByColumns.length; ++i) {
@@ -118,36 +116,16 @@ class GeneralTableModel extends BaseTableModel {
     }
 
     setCheckedMan = (numberOfCourse, columnName, idesMan) => {
-        if (!this.idOfCheckedMan[numberOfCourse]) {
-            this.idOfCheckedMan[numberOfCourse] = [];
+        if (!this.manListBusy[numberOfCourse]) {
+            this.manListBusy[numberOfCourse] = [];
         }
           
-        this.idOfCheckedMan[numberOfCourse][columnName] = idesMan;
-    }
-
-    getCheckedMan = (numberOfCourse, columnName) => {
-        if (!this.idOfCheckedMan[numberOfCourse]) {
-            this.idOfCheckedMan[numberOfCourse] = [];   
-        }
-        if (!this.idOfCheckedMan[numberOfCourse][columnName]) {
-            this.idOfCheckedMan[numberOfCourse][columnName] = [];
-        }
-        return this.idOfCheckedMan[numberOfCourse][columnName];
+        this.manListBusy[numberOfCourse][columnName] = idesMan;
     }
 
     // Возвращаем список людей выбранной группы, которые не заняты
     getManListForChoose = (row, columnName) => {
-        if (row === null)
-            return [];
-        // Список людей этой группы занятые 
-        let busyPeople = [];
-         // создаем копию объекта columns
-        const columnsCopy = { ...this.idOfCheckedMan[row] };
-        // удаляем указанное свойство из копии
-        delete columnsCopy[columnName];
-        // Объединяем все оставшиеся массивы в один
-        busyPeople.push(Object.values(columnsCopy).flat());
-        busyPeople = busyPeople.flat();
+        const busyPeople = this.getBusyManListFromOtherColumns(row, columnName);
 
         const copy =  this.groupsList[row].map((group) => {
             group.children = group.children.filter((person) => {

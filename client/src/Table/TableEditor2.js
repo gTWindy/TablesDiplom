@@ -93,7 +93,7 @@ const EditTable2 = observer(({ groups }) => {
                 <ChooseManEdit
                     isOpen={chooseManOpen}
                     items={tableModel ? tableModel.getManListForChoose(clickedCell.row, clickedCell.column) : []}
-                    selectedItems={tableModel ? tableModel.getBusyManList(clickedCell.row, clickedCell.column) : []}
+                    selectedItems={tableModel ? tableModel.getBusyManIdList(clickedCell.row, clickedCell.column) : []}
                     handleCloseModal={(ides) => onCloseModal(ides)}
                 />
             }

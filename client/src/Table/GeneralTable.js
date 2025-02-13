@@ -74,7 +74,7 @@ const GeneralTable = observer(() => {
           selectedItems={[]}
           handleCloseModal={(ides) => onCloseModal(ides)}
           isCheckable={true}
-          checkedKeys={tableModel?.getCheckedMan(clickedCell.row, clickedCell.column) ?? []}
+          checkedKeys={tableModel?.getBusyManIdList(clickedCell.row, clickedCell.column) ?? []}
         />
       }
     </>
