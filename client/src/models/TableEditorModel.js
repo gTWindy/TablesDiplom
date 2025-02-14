@@ -10,37 +10,15 @@ class TableEditorModel extends BaseTableModel{
   numbersOfGroups = [];
   // Номер курса
   numberOfCourse = -1;
-  // Дата, сохраненных данных
-  savedDate = '';
-  // Сохраненное имя
-  savedName = null;
-  // Сохраненное звание
-  savedRank = null;
-  // Данные самой таблицы
-  data = [];
 
   constructor(numbersOfGroup) {
     super();
 
-    // Делаем массив data наблюдаемым
-    this.data = observable([]);
-    this.setBusyManListAction = action(this.setBusyManList.bind(this));
+    this.setBusyManListAction = action(this.setBusyManIdList.bind(this));
 
     this.numbersOfGroups = numbersOfGroup;
     this.numberOfCourse = Math.floor(this.numbersOfGroups[0] / 1000);
     for (let i = 0; i < numbersOfGroup.length; ++i) {
-      this.data.push({
-        list: 10,
-        groupNumber: numbersOfGroup[i],
-        have: 10,
-        service: 0,
-        lazaret: 0,
-        hospital: 0,
-        trip: 0, 
-        vacation: 0,
-        dismissal: 0,
-        other: 0,
-      });
       this.manListBusy.push({
           service: [],
           lazaret: [],
@@ -51,19 +29,6 @@ class TableEditorModel extends BaseTableModel{
           other: []
       })
     }
-    // Добавляем последнюю строку "всего"
-    this.data.push({
-      list: 50,
-      groupNumber: 'Всего',
-      have: 50,
-      service: 0,
-      lazaret: 0,
-      hospital: 0,
-      trip: 0, 
-      vacation: 0,
-      dismissal: 0,
-      other: 0,
-    });
   };
 
   // Загружаем данные с сервера
@@ -80,31 +45,41 @@ class TableEditorModel extends BaseTableModel{
         this.savedName = result.name;
         this.savedRank = result.rank;
         for (let row = 0; row < 5; ++row) {
-          const groupNumber = this.data[row].groupNumber;
-          
+          const groupNumber = this.numbersOfGroup[row];
           result[groupNumber].forEach( (man) => {
             this.manListBusy[row][man.type].push(man.id);
-            this.data[row][man.type] += 1;
-            this.data[row].have -= 1;
-            // Последняя строка "Всего"
-            this.data[5][man.type] += 1;
-            this.data[5].have -= 1;
           })
         }
       }
     );
   }
 
-  // Устанавливаем новый список занятых
-  setBusyManList = (row, columnName, ides) => {
-    this.manListBusy[row][columnName] = ides;
-    // Обновление столбца "на лицо" и последней строки
-    const diff = ides.length - this.data[row][columnName];
-    this.data[row]['have'] -= diff;
-    this.data[row][columnName] = ides.length;
-    // Обновление последней строки
-    this.data[5]['have'] -= diff;
-    this.data[5][columnName] += diff;
+  getDataForView = () => {
+    const newDataForView = [];
+    // Последняя строчка "Всего"
+    let lastRowForView = {
+      groupNumber: "Всего",
+      list: 50,
+      have: 50
+    }
+    for (let i = 0; i < this.manListBusy.length; ++i) {
+      let newRowForView = {
+        groupNumber: this.numbersOfGroups[i],
+        list: 10,
+      };
+      let summOfAbsent = 0;
+      for (const columnName in this.manListBusy[i]) {
+        const busyManCountInColumn = this.manListBusy[i][columnName].length;
+        summOfAbsent += busyManCountInColumn;
+        newRowForView[columnName] = busyManCountInColumn;
+        lastRowForView[columnName] ? lastRowForView[columnName] += busyManCountInColumn : lastRowForView[columnName] = busyManCountInColumn;
+      }
+      newRowForView.have = 10 - summOfAbsent;
+      lastRowForView.have -= summOfAbsent;
+      newDataForView.push(newRowForView);
+    }
+    newDataForView.push(lastRowForView);
+    return newDataForView;
   }
 
   // Получаем список занятых людей для представления в таблице отсутствующих

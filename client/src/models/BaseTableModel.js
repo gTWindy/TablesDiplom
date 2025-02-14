@@ -71,6 +71,11 @@ class BaseTableModel {
         }
     }
 
+    // Устанавливаем новый список занятых
+    setBusyManIdList = (row, columnName, ides) => {
+        this.manListBusy[row][columnName] = ides;
+    }
+
     // Получаем список id занятых людей
     getBusyManIdList = (row = -1, columnName) => {
         if (row === -1)

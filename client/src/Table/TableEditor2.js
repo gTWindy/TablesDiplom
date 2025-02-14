@@ -55,7 +55,7 @@ const EditTable2 = observer(({ groups }) => {
                 <h4>РАЗВЕРНУТАЯ СТРОЕВАЯ ЗАПИСКА<br />{tableModel?.numberOfCourse ?? ''} курса на {tableModel?.savedDate ?? ''}</h4>
             </div>
             <EditTable 
-                dataToView={tableModel?.data ?? []}
+                dataToView={tableModel?.getDataForView() ?? []}
                 onCellClick={(cell) => {
                     setClickedCell(cell);
                     setChooseManOpen(true)

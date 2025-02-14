@@ -56,22 +56,21 @@ class GeneralTableModel extends BaseTableModel {
     }
 
     getDataForView = () => {
-        const dataByColumns = this.manListBusy;
-        let newDataForView = [];
+        const newDataForView = [];
         // Последняя строчка "Всего"
         let lastRowForView = {
             course: "Всего",
             list: 250,
             have: 250
         }
-        for (let i = 0; i < dataByColumns.length; ++i) {
+        for (let i = 0; i < this.manListBusy.length; ++i) {
             let newRowForView = {
                 course: i + 1,
                 list: 50,
             };
             let summOfAbsent = 0;
-            for (const columnName in dataByColumns[i]) {
-                const busyManCountInColumn = dataByColumns[i][columnName].length;
+            for (const columnName in this.manListBusy[i]) {
+                const busyManCountInColumn = this.manListBusy[i][columnName].length;
                 summOfAbsent += busyManCountInColumn;
                 newRowForView[columnName] = busyManCountInColumn;
                 lastRowForView[columnName] ?  lastRowForView[columnName] += busyManCountInColumn : lastRowForView[columnName] = busyManCountInColumn;
@@ -85,12 +84,11 @@ class GeneralTableModel extends BaseTableModel {
     }
 
     getBusyListForView = () => {
-        const dataByColumns = this.manListBusy;
         let busyListForView = [];
         let number = 1;
-        for (let i = 0; i < dataByColumns.length; ++i) {
-            for (const columnName in dataByColumns[i]) {
-                dataByColumns[i][columnName].forEach(idOfBusy => {
+        for (let i = 0; i < this.manListBusy.length; ++i) {
+            for (const columnName in this.manListBusy[i]) {
+                this.manListBusy[i][columnName].forEach(idOfBusy => {
                     for (let groupName in this.manList[i]) {
                         const info = this.manList[i][groupName].find((man) => man["Личный номер"] == idOfBusy);
                         if(!info) {
