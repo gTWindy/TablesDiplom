@@ -4,12 +4,6 @@ import { BaseTableModel } from './BaseTableModel';
 
 // Модель данных для одной таблицы-редактор курса
 class GeneralTableModel extends BaseTableModel {
-    // Дата, сохраненных данных
-    savedDate = "";
-    // Сохраненное имя
-    savedName = null;
-    // Сохраненное звание
-    savedRank = null;
     // Список отсутствующих людей с полной информацией
     busyList = [];
     // Список групп и людей в них
@@ -83,7 +77,7 @@ class GeneralTableModel extends BaseTableModel {
         return newDataForView;
     }
 
-    getBusyListForView = () => {
+    getBusyManListForTable = () => {
         let busyListForView = [];
         let number = 1;
         for (let i = 0; i < this.manListBusy.length; ++i) {
@@ -111,14 +105,6 @@ class GeneralTableModel extends BaseTableModel {
         }
 
         return busyListForView;
-    }
-
-    setCheckedMan = (numberOfCourse, columnName, idesMan) => {
-        if (!this.manListBusy[numberOfCourse]) {
-            this.manListBusy[numberOfCourse] = [];
-        }
-          
-        this.manListBusy[numberOfCourse][columnName] = idesMan;
     }
 
     // Возвращаем список людей выбранной группы, которые не заняты

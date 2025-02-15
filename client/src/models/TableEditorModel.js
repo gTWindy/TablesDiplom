@@ -45,7 +45,7 @@ class TableEditorModel extends BaseTableModel{
         this.savedName = result.name;
         this.savedRank = result.rank;
         for (let row = 0; row < 5; ++row) {
-          const groupNumber = this.numbersOfGroup[row];
+          const groupNumber = this.numbersOfGroups[row];
           result[groupNumber].forEach( (man) => {
             this.manListBusy[row][man.type].push(man.id);
           })

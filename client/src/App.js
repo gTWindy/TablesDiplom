@@ -1,9 +1,9 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
 import Login from './Login';
-import GeneralTable from './Table/GeneralTable';
+import GeneralTable from './Table/GeneralTableView';
 // React таблица
-import EditTable2 from './Table/TableEditor2';
+import EditTable2 from './Table/CourseTableView';
 import MedTable from './Table/MedTable/MedTable';
 
 // Настройки отображения даты 

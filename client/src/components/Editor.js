@@ -1,16 +1,12 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 import ChooseMan from '../components/ChooseMan/ChooseMan';
-import { TableEditorModel } from '../models/TableEditorModel'
-import './Table.css';
-import { useEffect } from 'react';
+import '../Table/Table.css';
 import PeopleList from '../components/PeopleList';
 import { observer } from "mobx-react-lite";
 import EditTable from '../components/EditTable';
 
-const EditTable2 = observer(({ groups }) => {
-    // Создаем состояние для хранения экземпляра модели
-    const [tableModel, setTableModel] = useState(null);
+const Editor = observer(({ tableModel, isGeneralTable }) => {
     const [chooseManOpen, setChooseManOpen] = useState(false);
     // Для хранения текущей ячейки
     const [clickedCell, setClickedCell] = useState({ row: null, column: null });
@@ -21,21 +17,8 @@ const EditTable2 = observer(({ groups }) => {
     // Признак наличия несохраненных изменений
     const [needSave, setNeedSave] = useState(false);
 
-
-    // Создаем экземпляр модели только один раз при монтировании компонента
-    useEffect(() => {
-        const createAndLoadModel = async () => {
-            const model = new TableEditorModel(groups);
-            await model.loadData();
-            setTableModel(model);
-        };
-
-        createAndLoadModel();
-    }, []);
-
     // Обрабатываем закрытия модального окна
     const onCloseModal = (idesMan) => {
-        console.log(idesMan);
         tableModel.setBusyManListAction(clickedCell.row, clickedCell.column, idesMan);
         setChooseManOpen(false);
         setNeedSave(true);
@@ -60,6 +43,7 @@ const EditTable2 = observer(({ groups }) => {
                     setClickedCell(cell);
                     setChooseManOpen(true)
                 }}
+                isGeneralTable={isGeneralTable}
             >
             </EditTable>
             <div className='undertable_block'>
@@ -86,7 +70,8 @@ const EditTable2 = observer(({ groups }) => {
                 </button>
             </div>
             <PeopleList props={{
-                peopleList: tableModel?.getBusyManListForTable() || []
+                peopleList: tableModel?.getBusyManListForTable() || [],
+                isGeneralTable
             }}>
             </PeopleList>
             {chooseManOpen &&
@@ -102,4 +87,4 @@ const EditTable2 = observer(({ groups }) => {
     );
 });
 
-export default EditTable2;
+export default Editor;

@@ -6,11 +6,11 @@ import { observer } from "mobx-react-lite";
 const columns = [
   {
     Header: 'N п/п',
-    accessor: 'number',// accessor is the "key" in the data
+    accessor: 'number',
   },
   {
     Header: 'Подразделение',
-    accessor: 'groupNumber',// accessor is the "key" in the data
+    accessor: 'groupNumber',
   },
   {
     Header: 'По списку',
@@ -50,13 +50,13 @@ const columns = [
   }
 ]
 
-const EditTable = observer(({ dataToView, onCellClick, isGeneral }) => {
+const EditTable = observer(({ dataToView, onCellClick, isGeneralTable }) => {
     // Идентификаторы редактируемых столбцов
     const editableColumnIds = ['service', 'trip', 'vacation', 'dismissal', 'other'];
 
     const memoizedColumns = useMemo(
         () => {
-            if (isGeneral) {
+            if (isGeneralTable) {
                 columns[1].Header = "Курс";
                 columns[1].accessor = "course";
             }

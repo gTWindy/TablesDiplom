@@ -35,7 +35,7 @@ const columns = [
 const PeopleList = ({ props }) => {
     
     const memoColumns = useMemo(() => {
-        if (props.isGeneral) {
+        if (props.isGeneralTable) {
             columns[1].Header = "Курс";
             columns[1].accessor = "course";
         }
