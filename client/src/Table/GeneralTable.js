@@ -56,6 +56,18 @@ const GeneralTable = observer(() => {
         <span>
           Дежурный
         </span>
+
+        <input
+          ref={rankInput}
+          defaultValue={tableModel?.getSavedRank() || null}
+          placeholder='Звание'
+        ></input>
+        <input
+          ref={nameInput}
+          defaultValue={tableModel?.getSavedName() || null}
+          placeholder='ФИО'
+        ></input>
+
         <button
           onClick={() => console.log('grpd-table btn-sv clicked')}
         >

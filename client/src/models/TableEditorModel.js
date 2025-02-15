@@ -113,11 +113,19 @@ class TableEditorModel extends BaseTableModel{
 
   // Возвращаем список людей выбранной группы, которые не заняты
   getManListForChoose = (row, columnName) => {
+    //Получаем список id занятых по всем столбцам, выбранной строки
     const busyPeople = this.getBusyManListFromOtherColumns(row, columnName);
     // Номер группы
     const groupName = this.numbersOfGroups[row];
     
-    return this.manList[groupName].filter(person => !busyPeople.includes(person['Личный номер']));
+    let listForChoose = this.manList[groupName].filter(person => !busyPeople.includes(person['Личный номер']));
+    listForChoose = listForChoose.map((man) => {
+      return {
+        title: man["ФИО"],
+        key: man["Личный номер"]
+      }
+    })
+    return listForChoose;
   }
 
   // Отправляем список занятых на сервер

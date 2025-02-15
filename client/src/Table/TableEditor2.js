@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef } from 'react';
 
-import ChooseManEdit from '../components/ChooseMan/ChooseManEdit';
+import ChooseMan from '../components/ChooseMan/ChooseMan';
 import { TableEditorModel } from '../models/TableEditorModel'
 import './Table.css';
 import { useEffect } from 'react';
@@ -90,10 +90,11 @@ const EditTable2 = observer(({ groups }) => {
             }}>
             </PeopleList>
             {chooseManOpen &&
-                <ChooseManEdit
+                <ChooseMan
                     isOpen={chooseManOpen}
                     items={tableModel ? tableModel.getManListForChoose(clickedCell.row, clickedCell.column) : []}
-                    selectedItems={tableModel ? tableModel.getBusyManIdList(clickedCell.row, clickedCell.column) : []}
+                    isCheckable={true}
+                    checkedKeys={tableModel ? tableModel.getBusyManIdList(clickedCell.row, clickedCell.column) : []}
                     handleCloseModal={(ides) => onCloseModal(ides)}
                 />
             }
