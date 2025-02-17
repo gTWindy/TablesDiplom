@@ -1,3 +1,4 @@
+import { action } from "mobx";
 import {dateOptions} from '../App';
 
 // Базовая модель данных
@@ -12,6 +13,18 @@ class BaseTableModel {
     manListBusy = [];
 
     constructor() {
+        this.setBusyManListAction = action(this.setBusyManIdList.bind(this));
+        for (let i = 0; i < 5; ++i) {
+            this.manListBusy.push({
+                service: [],
+                lazaret: [],
+                hospital: [],
+                trip: [], 
+                vacation: [],
+                dismissal: [],
+                other: []
+            })
+        }
     };
 
     // Делаем запрос
@@ -47,30 +60,6 @@ class BaseTableModel {
         return this.savedName;
     }
 
-    // Отправляем список занятых на сервер
-    sendToServer = async (dataToSend) => {
-        try {
-            const response = await fetch('http://localhost:5000/busyList', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                // Отправляем список занятых
-                body: JSON.stringify({
-                    data: dataToSend,
-                    savedName: this.savedName,
-                    savedRank: this.savedRank,
-                    date: new Date().toLocaleDateString('ru-RU', dateOptions)
-                })
-            });
-            if (!response.ok) {
-                throw new Error("Ошибка при отправке данных занятых.");
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-        }
-    }
-
     // Устанавливаем новый список занятых
     setBusyManIdList = (row, columnName, ides) => {
         this.manListBusy[row][columnName] = ides;
@@ -96,6 +85,35 @@ class BaseTableModel {
         // Объединяем все оставшиеся массивы в один
         busyPeople.push(Object.values(columnsCopy).flat());
         return busyPeople.flat();
+    }
+
+    // Отправляем список занятых на сервер
+    sendBusyListToServer  = async () => {
+        const objectToSend = {
+            people: this.manListBusy,
+            savedName: this.savedName,
+            savedRank: this.savedRank,
+            date: new Date().toLocaleDateString("ru-RU", dateOptions)
+        };
+        if (this.numberOfCourse) {
+            objectToSend.numberOfCourse = this.numberOfCourse;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/busyList', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // Отправляем список занятых
+                body: JSON.stringify(objectToSend),
+            });
+            if (!response.ok) {
+                throw new Error("Ошибка при отправке данных занятых.");
+            }
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
     }
 }
 

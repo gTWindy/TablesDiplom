@@ -14,16 +14,23 @@ class GeneralTableModel extends BaseTableModel {
     constructor() {
         super();
 
-        this.manListBusy = observable([]);
     };
 
     // Загружаем данные с сервера
     loadData = async () => {
         await this.makeRequest(`http://localhost:5000/busyList`,
             (loadedData) => {
-                this.manListBusy = loadedData;
+                this.savedDate = loadedData.date;
+                this.savedName = loadedData.name;
+                this.savedRank = loadedData.rank;
+                for (let row = 0; row < 5; ++row) {
+                    loadedData[row].forEach((man) => {
+                        this.manListBusy[row][man.type].push(man.id);
+                    })
+                }
             }
         );
+
 
         // Загружаем список всех курсантов, для возможности показа списка
         await this.makeRequest("http://localhost:5000/manList",

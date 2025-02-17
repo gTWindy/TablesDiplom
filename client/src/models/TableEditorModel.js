@@ -1,5 +1,4 @@
 import {dateOptions, translateForColumns} from '../App';
-import { observable, action } from "mobx";
 import { BaseTableModel } from './BaseTableModel';
 
 // Модель данных для одной таблицы-редактор курса
@@ -14,21 +13,8 @@ class TableEditorModel extends BaseTableModel{
   constructor(numbersOfGroup) {
     super();
 
-    this.setBusyManListAction = action(this.setBusyManIdList.bind(this));
-
     this.numbersOfGroups = numbersOfGroup;
     this.numberOfCourse = Math.floor(this.numbersOfGroups[0] / 1000);
-    for (let i = 0; i < numbersOfGroup.length; ++i) {
-      this.manListBusy.push({
-          service: [],
-          lazaret: [],
-          hospital: [],
-          trip: [], 
-          vacation: [],
-          dismissal: [],
-          other: []
-      })
-    }
   };
 
   // Загружаем данные с сервера
@@ -45,6 +31,7 @@ class TableEditorModel extends BaseTableModel{
         this.savedName = result.name;
         this.savedRank = result.rank;
         for (let row = 0; row < 5; ++row) {
+          //Получаем номер группы
           const groupNumber = this.numbersOfGroups[row];
           result[groupNumber].forEach( (man) => {
             this.manListBusy[row][man.type].push(man.id);
@@ -126,32 +113,6 @@ class TableEditorModel extends BaseTableModel{
       }
     })
     return listForChoose;
-  }
-
-  // Отправляем список занятых на сервер
-  sendBusyListToServer = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/busyList', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // Отправляем список занятых
-        body: JSON.stringify({
-          people: this.manListBusy,
-          numberOfCourse: this.numberOfCourse,
-          savedName: this.savedName,
-          savedRank: this.savedRank,
-          date: new Date().toLocaleDateString('ru-RU', dateOptions)
-
-        }),
-      });
-      if (!response.ok) {
-        throw new Error('Ошибка при отправке данных занятых.');
-      }
-    } catch (error) {
-      console.error('Ошибка:', error);
-    }
   }
 }
 

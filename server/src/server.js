@@ -137,17 +137,21 @@ app.post('/busyList', async (req, res) => {
 
     // Номер курса
     const numberOfCourse = formData.numberOfCourse;
-    // Сначала очищаем старые записи
-    await db.clearBusyTable(numberOfCourse);
-    // Вставляем занятых в бд
-    for (const group of formData.people) {
-        for (let columnName in group.columns) {
-            group.columns[columnName].forEach((busyManId) => db.insertOrUpdateBusyTable(busyManId, columnName));
-        }
+    if (numberOfCourse) {
+        // Сначала очищаем старые записи сохранения для этого курса
+        await db.clearBusyTable(numberOfCourse);
     }
 
-    // Вставляем запись о сохранении в бд
-    db.insertRowInSaveTable(numberOfCourse, formData.date, formData.savedName, formData.savedRank);
+    // Вставляем занятых в бд
+    for (const group of formData.people) {
+        for (let columnName in group) {
+            group[columnName].forEach((busyManId) => db.insertOrUpdateBusyTable(busyManId, columnName));
+        }
+    }
+    if (numberOfCourse) {
+        // Вставляем запись о сохранении в бд
+        await db.insertRowInSaveTable(numberOfCourse, formData.date, formData.savedName, formData.savedRank);
+    }
 
     const filePathBusy = `./test/${numberOfCourse}курс/busyList.json`;
     // Записываем обновленные данные в файл
@@ -214,27 +218,27 @@ app.get('/busyList', async (req, res) => {
     }
     else {
         // Получаем первый курс занятых
-        const firstCourseBusy = getBusyList('./test/1курс/busyList.json', true);
+        const firstCourseBusy = await db.selectByCourseFromBusyTable(1);
             
         // Получаем второй курс
-        const secondCourse = getBusyList('./test/2курс/busyList.json', true);
+        const secondCourse = await db.selectByCourseFromBusyTable(2);
 
         // Получаем третий курс
-        const thirdCourse = getBusyList('./test/3курс/busyList.json', true);
+        const thirdCourse = await db.selectByCourseFromBusyTable(3);
 
         // Получаем четвёртый курс
-        const fourthCourse = getBusyList('./test/4курс/busyList.json', true);
+        const fourthCourse = await db.selectByCourseFromBusyTable(4);
 
         // Получаем пятый курс
-        const fifthCourse = getBusyList('./test/5курс/busyList.json', true);
+        const fifthCourse = await db.selectByCourseFromBusyTable(5);
 
         // Отправляем JSON-ответ
         return res.status(200).json([
-            { ...firstCourseBusy.people },
-            { ...secondCourse.people },
-            { ...thirdCourse.people },
-            { ...fourthCourse.people },
-            { ...fifthCourse.people }
+            [ ...firstCourseBusy ],
+            [ ...secondCourse ],
+            [ ...thirdCourse ],
+            [ ...fourthCourse ],
+            [ ...fifthCourse ]
         ]);
     }
 })
