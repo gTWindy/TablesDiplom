@@ -39,8 +39,19 @@ const PeopleList = ({ props }) => {
             columns[1].Header = "Курс";
             columns[1].accessor = "course";
         }
-        return columns;
-    });
+        return columns.map(column => ({
+            ...column,
+            Cell: ({ value, row, column: { id } }) => {
+                // Для столбца "Примечание" даем возможность что-то писать
+                if (id === "remark")
+                    return <input/>
+                else {
+                    // Для остальных столбцов выводим обычное значение
+                    return <span>{value}</span>;
+                }
+            }
+        }))
+    }, []);
 
     const {
         getTableProps,

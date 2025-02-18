@@ -90,6 +90,7 @@ class TableEditorModel extends BaseTableModel{
             name: busyMan['ФИО'],
             reason: translateForColumns[columnName],
             remark: '',
+            phone: busyMan["Номер телефона"]
           });
           ++i;
         }

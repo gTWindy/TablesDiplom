@@ -136,87 +136,84 @@ app.post('/busyList', async (req, res) => {
     const formData = req.body;
 
     // Номер курса
-    const numberOfCourse = formData.numberOfCourse;
+    let numberOfCourse = formData.numberOfCourse;
     if (numberOfCourse) {
-        // Сначала очищаем старые записи сохранения для этого курса
+        // Очищаем старые записи сохранения для этого курса
         await db.clearBusyTable(numberOfCourse);
+    } else {
+        numberOfCourse = 0;
+        await db.clearBusyTable(1);
+        await db.clearBusyTable(2);
+        await db.clearBusyTable(3);
+        await db.clearBusyTable(4);
+        await db.clearBusyTable(5);
     }
 
     // Вставляем занятых в бд
     for (const group of formData.people) {
         for (let columnName in group) {
-            group[columnName].forEach((busyManId) => db.insertOrUpdateBusyTable(busyManId, columnName));
+            group[columnName].forEach(async (busyManId) => await db.insertOrUpdateBusyTable(busyManId, columnName));
         }
     }
-    if (numberOfCourse) {
-        // Вставляем запись о сохранении в бд
-        await db.insertRowInSaveTable(numberOfCourse, formData.date, formData.savedName, formData.savedRank);
-    }
-
-    const filePathBusy = `./test/${numberOfCourse}курс/busyList.json`;
-    // Записываем обновленные данные в файл
-    fs.writeFileSync(filePathBusy, JSON.stringify({
-        date: formData.date,
-        people: formData.people
-    }, null, 2));
+    
+    // Обновляем запись о сохранении в бд
+    await db.insertRowInSaveTable(numberOfCourse, formData.date, formData.savedName, formData.savedRank);
+    
     return res.status(200);
 })
 
 app.get('/busyList', async (req, res) => {
     // Извлекаем параметр курс из запроса
-    const course = req.query.course;
+    let course = req.query.course;
+    // Наш ответ клиенту
+    const response = {};
     if (course) {
-        let busyList = {};
-
         switch(Number(course)) {
             case 1:
-                busyList['1111'] = await db.selectByGroupFromBusyTable(1111);
-                busyList['1112'] = await db.selectByGroupFromBusyTable(1112);
-                busyList['1113'] = await db.selectByGroupFromBusyTable(1113);
-                busyList['1114'] = await db.selectByGroupFromBusyTable(1114);
-                busyList['1115'] = await db.selectByGroupFromBusyTable(1115);
+                response['1111'] = await db.selectByGroupFromBusyTable(1111);
+                response['1112'] = await db.selectByGroupFromBusyTable(1112);
+                response['1113'] = await db.selectByGroupFromBusyTable(1113);
+                response['1114'] = await db.selectByGroupFromBusyTable(1114);
+                response['1115'] = await db.selectByGroupFromBusyTable(1115);
                 break;
             case 2:
-                busyList['2111'] = await db.selectByGroupFromBusyTable(2111);
-                busyList['2112'] = await db.selectByGroupFromBusyTable(2112);
-                busyList['2113'] = await db.selectByGroupFromBusyTable(2113);
-                busyList['2114'] = await db.selectByGroupFromBusyTable(2114);
-                busyList['2115'] = await db.selectByGroupFromBusyTable(2115);
+                response['2111'] = await db.selectByGroupFromBusyTable(2111);
+                response['2112'] = await db.selectByGroupFromBusyTable(2112);
+                response['2113'] = await db.selectByGroupFromBusyTable(2113);
+                response['2114'] = await db.selectByGroupFromBusyTable(2114);
+                response['2115'] = await db.selectByGroupFromBusyTable(2115);
                 break;
             case 3:
-                busyList['3111'] = await db.selectByGroupFromBusyTable(3111);
-                busyList['3112'] = await db.selectByGroupFromBusyTable(3112);
-                busyList['3113'] = await db.selectByGroupFromBusyTable(3113);
-                busyList['3114'] = await db.selectByGroupFromBusyTable(3114);
-                busyList['3115'] = await db.selectByGroupFromBusyTable(3115);
+                response['3111'] = await db.selectByGroupFromBusyTable(3111);
+                response['3112'] = await db.selectByGroupFromBusyTable(3112);
+                response['3113'] = await db.selectByGroupFromBusyTable(3113);
+                response['3114'] = await db.selectByGroupFromBusyTable(3114);
+                response['3115'] = await db.selectByGroupFromBusyTable(3115);
                 break;
             case 4:
-                busyList['4111'] = await db.selectByGroupFromBusyTable(4111);
-                busyList['4112'] = await db.selectByGroupFromBusyTable(4112);
-                busyList['4113'] = await db.selectByGroupFromBusyTable(4113);
-                busyList['4114'] = await db.selectByGroupFromBusyTable(4114);
-                busyList['4115'] = await db.selectByGroupFromBusyTable(4115);
+                response['4111'] = await db.selectByGroupFromBusyTable(4111);
+                response['4112'] = await db.selectByGroupFromBusyTable(4112);
+                response['4113'] = await db.selectByGroupFromBusyTable(4113);
+                response['4114'] = await db.selectByGroupFromBusyTable(4114);
+                response['4115'] = await db.selectByGroupFromBusyTable(4115);
                 break;
             case 5:
-                busyList['5111'] = await db.selectByGroupFromBusyTable(5111);
-                busyList['5112'] = await db.selectByGroupFromBusyTable(5112);
-                busyList['5113'] = await db.selectByGroupFromBusyTable(5113);
-                busyList['5114'] = await db.selectByGroupFromBusyTable(5114);
-                busyList['5115'] = await db.selectByGroupFromBusyTable(5115);
+                response['5111'] = await db.selectByGroupFromBusyTable(5111);
+                response['5112'] = await db.selectByGroupFromBusyTable(5112);
+                response['5113'] = await db.selectByGroupFromBusyTable(5113);
+                response['5114'] = await db.selectByGroupFromBusyTable(5114);
+                response['5115'] = await db.selectByGroupFromBusyTable(5115);
                 break;
             default:
                 return res.status(404);
         }
-        const saveRow = await db.selectSaveRowByCourse(Number(course));
-        if (saveRow) {
-            busyList.rank = saveRow.rank;
-            busyList.name = saveRow.name;
-            busyList.date = saveRow.date;
-        }
-        // Отправляем JSON-ответ
-        return res.status(200).json({...busyList});
+        
+        
     }
     else {
+        // 0 курс - это факультет
+        course = 0;
+        
         // Получаем первый курс занятых
         const firstCourseBusy = await db.selectByCourseFromBusyTable(1);
             
@@ -232,15 +229,22 @@ app.get('/busyList', async (req, res) => {
         // Получаем пятый курс
         const fifthCourse = await db.selectByCourseFromBusyTable(5);
 
-        // Отправляем JSON-ответ
-        return res.status(200).json([
+        response.people = [
             [ ...firstCourseBusy ],
             [ ...secondCourse ],
             [ ...thirdCourse ],
             [ ...fourthCourse ],
             [ ...fifthCourse ]
-        ]);
+        ];
     }
+    const saveRow = await db.selectSaveRowByCourse(Number(course));
+    if (saveRow) {
+        response.rank = saveRow.rank;
+        response.name = saveRow.name;
+        response.date = saveRow.date;
+    }
+    // Отправляем JSON-ответ
+    return res.status(200).json({...response});
 })
 
 // Получаем список больных

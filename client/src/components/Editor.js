@@ -35,7 +35,13 @@ const Editor = observer(({ tableModel, isGeneralTable }) => {
     return (
         <>
             <div className='table_header'>
-                <h4>РАЗВЕРНУТАЯ СТРОЕВАЯ ЗАПИСКА<br />{tableModel?.numberOfCourse ?? ''} курса на {tableModel?.savedDate ?? ''}</h4>
+                <h4>РАЗВЕРНУТАЯ СТРОЕВАЯ ЗАПИСКА<br />
+                {!isGeneralTable ?
+                    `${tableModel?.numberOfCourse ?? ""} курса на ${tableModel?.savedDate ?? ''}`
+                    :
+                    `Факультета АСУ на ${tableModel?.savedDate ?? ''}`
+                }
+                </h4>
             </div>
             <EditTable 
                 dataToView={tableModel?.getDataForView() ?? []}
@@ -48,18 +54,24 @@ const Editor = observer(({ tableModel, isGeneralTable }) => {
             </EditTable>
             <div className='undertable_block'>
                 <span>
-                    Дежурный за {tableModel?.numberOfCourse ?? ''} курс
+                    {!isGeneralTable ?
+                        `Дежурный за ${tableModel?.numberOfCourse ?? ''} курс`
+                        :
+                        "Дежурный по факультету"
+                    }
                 </span>
 
                 <input
                     ref={rankInput}
                     defaultValue={tableModel?.getSavedRank() || null}
-                    placeholder='Звание'
+                    placeholder="Звание"
+                    onChange={() => setNeedSave(true)}
                 ></input>
                 <input
                     ref={nameInput}
                     defaultValue={tableModel?.getSavedName() || null}
-                    placeholder='ФИО'
+                    placeholder="ФИО"
+                    onChange={() => setNeedSave(true)}
                 ></input>
 
                 <button

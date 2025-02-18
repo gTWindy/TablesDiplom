@@ -24,7 +24,7 @@ class GeneralTableModel extends BaseTableModel {
                 this.savedName = loadedData.name;
                 this.savedRank = loadedData.rank;
                 for (let row = 0; row < 5; ++row) {
-                    loadedData[row].forEach((man) => {
+                    loadedData.people[row].forEach((man) => {
                         this.manListBusy[row][man.type].push(man.id);
                     })
                 }
