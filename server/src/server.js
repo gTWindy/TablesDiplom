@@ -324,8 +324,7 @@ app.post('/sick', async (req, res) => {
     fs.writeFileSync(filePathSick, JSON.stringify(formData.rows, null, 2)); // Форматируем JSON с отступами
 
     console.log('Больные успешно обновлены.');
-    // Отправляем JSON-ответ
-    return res.status(200).json();
+    return res.status(204);
 })
 
 app.get('/checkLogin', (req, res) => {

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import './Login.css';
+import React, { useState } from "react";
+import "./Login.css";
+import { sendToServer } from "./Net";
 
 const LoginForm = ({ onAuthenticate }) => {
   const [username, setUsername] = useState('');
@@ -12,31 +13,15 @@ const LoginForm = ({ onAuthenticate }) => {
     console.log('Логин:', username);
     console.log('Пароль:', password);
 
-    try {
-      const response = await fetch('http://localhost:5000/checkLogin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // Отправляем логин и пароль
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Ошибка при входе. Проверьте логин и пароль.');
-      }
-
-      const data = await response.json();
-      console.log('Успешный вход:', data);
-      setError('');
-      console.log(data.state);
-      onAuthenticate(data.state);
-
-      // Здесь можно сохранить токен или выполнить переход на другую страницу
-    } catch (error) {
-      console.error('Ошибка:', error);
+    const response = await sendToServer("http://localhost:5000/checkLogin", { username, password });
+    if (response) { 
+      console.log('Успешный вход:', response);
+      setError("");
+      console.log(response.state);
+      onAuthenticate(response.state);
+    } else {
       setError('Ошибка, введите правильный логин и пароль');
-    } 
+    }
   };
 
   return (

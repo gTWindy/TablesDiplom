@@ -1,5 +1,6 @@
 import { action } from "mobx";
 import {dateOptions} from '../App';
+import { sendToServer } from "../Net";
 
 // Базовая модель данных
 class BaseTableModel {
@@ -99,21 +100,7 @@ class BaseTableModel {
             objectToSend.numberOfCourse = this.numberOfCourse;
         }
 
-        try {
-            const response = await fetch('http://localhost:5000/busyList', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                // Отправляем список занятых
-                body: JSON.stringify(objectToSend),
-            });
-            if (!response.ok) {
-                throw new Error("Ошибка при отправке данных занятых.");
-            }
-        } catch (error) {
-            console.error("Ошибка:", error);
-        }
+        await sendToServer("http://localhost:5000/busyList", objectToSend);
     }
 }
 

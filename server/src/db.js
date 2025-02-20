@@ -219,7 +219,7 @@ class DB {
     async removeFromBusyTableById(id) {
         const sql = `
         DELETE FROM busy
-        WHERE id = :id)
+        WHERE id = :id
         `;
         return this.run(sql, [id]);
     }
@@ -252,18 +252,18 @@ class DB {
     }
 
     // Вставить больного курсанта в таблицу
-    async insertOrUpdateSickTable(id, medInstitution, date, diagnosis) {
+    async insertOrUpdateSickTable(id, type, date, diagnosis) {
         const sql = `INSERT INTO sick (id, type, date, diagnosis)
-                    VALUES (:id, :medInstitution, :date, :diagnosis)
+                    VALUES (:id, :type, :date, :diagnosis)
                     ON CONFLICT(id) DO UPDATE SET
-                        type = EXCLUDED.medInstitution;`;
-        return this.run(sql, [id, medInstitution, date, diagnosis]);
+                        type = EXCLUDED.type;`;
+        return this.run(sql, [id, type, date, diagnosis]);
     }
     
     async removeFromSickTableById(id) {
         const sql = `
         DELETE FROM sick
-        WHERE id = :id)
+        WHERE id = :id
         `;
         return this.run(sql, [id]);
     }
