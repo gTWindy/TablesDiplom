@@ -1,6 +1,6 @@
 import { action } from "mobx";
 import {dateOptions} from '../App';
-import { sendToServer } from "../Net";
+import { getFromServer, sendToServer } from "../Net";
 
 // Базовая модель данных
 class BaseTableModel {
@@ -30,15 +30,10 @@ class BaseTableModel {
 
     // Делаем запрос
     makeRequest = async (url, func) => {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status}`);
-            }
-            func(await response.json());
-        } catch (error) {
-            console.error('There has been a problem with your fetch operation:', error);
-        };
+        const result = await getFromServer(url);
+        if (result) {
+            func(result);
+        }
     }
     
     // Устанавливаем новое звание

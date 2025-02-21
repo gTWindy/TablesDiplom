@@ -8,7 +8,7 @@ import ComboBox from '../../components/ComboBox';
 import '../Table.css';
 import './MedTable.css';
 import { dateOptions } from '../../App';
-import { sendToServer } from '../../Net';
+import { sendToServer, getFromServer } from '../../Net';
 
 const courseTranslate = [
     "Первый курс",
@@ -35,51 +35,38 @@ const MedTable = () => {
     const [loadedItems, setItems] = useState([]);
 
     useEffect(() => {
-        // Функция для получения данных с сервера
+
         const fetchData = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/sick');
-                if (!response.ok)
-                    throw new Error('Network response was not ok');
-                const result = await response.json();
-                // Установка полученных данных в состояние
-                setRows(result);
-            } catch (error) {
-                console.error(error);
+            // Загружаем список больных
+            const resultSick = await getFromServer("http://localhost:5000/sick");
+            // Загружаем список всех курсантов, для возможности выбора нового больного
+            const result = getFromServer("http://localhost:5000/manList");
+            if (!resultSick || !result) {
+                return;
             }
-        };
-        fetchData(); // Вызов функции получения данных
-
-        // Загружаем список всех курсантов, для возможности выбора нового больного
-        fetch('http://localhost:5000/manList')
-            .then(response => {
-                if (!response.ok)
-                    throw new Error(`Network response was not ok: ${response.status}`);
-                // Преобразуем ответ в JSON
-                return response.json();
-            })
-            .then(data => {
-                let newData = Object.keys(data).map(course => ({
-                    title: courseTranslate[course],
-                    key: course,
+            // Установка полученных данных в состояние
+            setRows(resultSick);
+            
+            const newData = Object.keys(result).map(course => ({
+                title: courseTranslate[course],
+                key: course,
+                selectable: false,
+                children: Object.keys(result[course]).map(group => ({
+                    title: group,
+                    key: group,
                     selectable: false,
-                    children: Object.keys(data[course]).map(group => ({
-                        title: group,
-                        key: group,
-                        selectable: false,
-                        children: data[course][group].map(man => ({
-                            title: man['ФИО'] + ' ' + man['Личный номер'],
-                            key: man['Личный номер'],
-                            course,
-                            group,
-                            value: { ...man },
-                        }))
+                    children: result[course][group].map(man => ({
+                        title: man['ФИО'] + ' ' + man['Личный номер'],
+                        key: man['Личный номер'],
+                        course,
+                        group,
+                        value: { ...man },
                     }))
-                }));
-                setItems(newData);
-            });
-
-
+                }))
+            }));
+            setItems(newData);
+        }
+        fetchData();
     }, []);
 
     // Обработка вызова кастомного меню
@@ -157,13 +144,13 @@ const MedTable = () => {
     // Нажатие кнопки сохранить
     const onButtonSaveClicked = async () => {
         setNeedSave(false);
-        sendToServer("http://localhost:5000/sick", { rows });    
+        sendToServer("http://localhost:5000/sick", { rows });
     };
 
     return (
         <>
             <div className='table_header'>
-                <h3>Справка-доклад по заболеваемости военнослужащих академии по сосмоянию на 
+                <h3>Справка-доклад по заболеваемости военнослужащих академии по сосмоянию на
                     {" 01.01.2001"}
                 </h3>
             </div>
