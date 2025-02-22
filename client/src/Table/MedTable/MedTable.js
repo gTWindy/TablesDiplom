@@ -149,6 +149,9 @@ const MedTable = () => {
 
     return (
         <>
+            <button className="svg-container">
+                <img src="./printer.svg"/>
+            </button>
             <div className='table_header'>
                 <h3>Справка-доклад по заболеваемости военнослужащих академии по сосмоянию на
                     {" 01.01.2001"}

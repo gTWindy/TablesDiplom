@@ -34,6 +34,9 @@ const Editor = observer(({ tableModel, isGeneralTable }) => {
 
     return (
         <>
+            <button className="svg-container">
+                <img src="./printer.svg"/>
+            </button>
             <div className='table_header'>
                 <h4>РАЗВЕРНУТАЯ СТРОЕВАЯ ЗАПИСКА<br />
                 {!isGeneralTable ?
