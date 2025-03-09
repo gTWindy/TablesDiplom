@@ -1,5 +1,5 @@
-import React, { 
-    useState, 
+import React, {
+    useState,
     useEffect
 } from 'react';
 import ContextMenu from './ContextMenu';
@@ -7,17 +7,18 @@ import ChooseMan from '../../components/ChooseMan/ChooseMan';
 import ComboBox from '../../components/ComboBox';
 import '../Table.css';
 import './MedTable.css';
-import {dateOptions} from '../../App';
+import { dateOptions } from '../../App';
+import { sendToServer, getFromServer } from '../../Net';
 
-const courseTranslate = {
-    firstCourse: "Первый курс",
-    secondCourse: "Второй курс",
-    thirdCourse: "Третий курс",
-    fourthCourse: "Четвёртый курс",
-    fifthCourse: "Пятый курс",
-}
+const courseTranslate = [
+    "Первый курс",
+    "Второй курс",
+    "Третий курс",
+    "Четвёртый курс",
+    "Пятый курс"
+]
 
-const MedTable = () => {   
+const MedTable = () => {
     // Строки таблицы
     const [rows, setRows] = useState([{}]);
     // Позиция для кастомного меню
@@ -34,51 +35,38 @@ const MedTable = () => {
     const [loadedItems, setItems] = useState([]);
 
     useEffect(() => {
-        // Функция для получения данных с сервера
+
         const fetchData = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/sick');
-                if (!response.ok)
-                    throw new Error('Network response was not ok');
-                const result = await response.json();
-                // Установка полученных данных в состояние
-                setRows(result);
-            } catch (error) {
-                console.error(error);
+            // Загружаем список больных
+            const resultSick = await getFromServer("http://localhost:5000/sick");
+            // Загружаем список всех курсантов, для возможности выбора нового больного
+            const result = getFromServer("http://localhost:5000/manList");
+            if (!resultSick || !result) {
+                return;
             }
-        };
-        fetchData(); // Вызов функции получения данных
-        
-        // Загружаем список всех курсантов, для возможности выбора нового больного
-        fetch('http://localhost:5000/manList')
-        .then(response => {
-            if (!response.ok)
-                throw new Error(`Network response was not ok: ${response.status}`);
-            // Преобразуем ответ в JSON
-            return response.json();
-        })
-        .then(data => {
-            let newData = Object.keys(data).map(course => ({ 
+            // Установка полученных данных в состояние
+            setRows(resultSick);
+            
+            const newData = Object.keys(result).map(course => ({
                 title: courseTranslate[course],
                 key: course,
                 selectable: false,
-                children: Object.keys(data[course]).map(group => ({ 
+                children: Object.keys(result[course]).map(group => ({
                     title: group,
                     key: group,
                     selectable: false,
-                    children: data[course][group].map(man => ({
+                    children: result[course][group].map(man => ({
                         title: man['ФИО'] + ' ' + man['Личный номер'],
                         key: man['Личный номер'],
                         course,
                         group,
-                        value: {...man},
+                        value: { ...man },
                     }))
                 }))
             }));
             setItems(newData);
-        });
-
-
+        }
+        fetchData();
     }, []);
 
     // Обработка вызова кастомного меню
@@ -121,7 +109,7 @@ const MedTable = () => {
     function handleInsert() {
         if (selectedRowIndex === null)
             return;
-            setShowModal(true);
+        setShowModal(true);
     }
 
     function handleDelete() {
@@ -135,10 +123,10 @@ const MedTable = () => {
     // Обработка вставки нового больного и закрытия модального окна
     const closeModal = (newManNode) => {
         setShowModal(false); // Закрываем модальное окно
-        if(!newManNode)
+        if (!newManNode)
             return;
         const newRows = [...rows];
-        
+
         newRows.splice(newRows.length, 0, {});
         newRows[newRows.length - 1].rank = newManNode.value['Воинское звание'];
         newRows[newRows.length - 1].name = newManNode.value['ФИО'];
@@ -155,110 +143,106 @@ const MedTable = () => {
 
     // Нажатие кнопки сохранить
     const onButtonSaveClicked = async () => {
-        try {
-            const response = await fetch('http://localhost:5000/sick', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              // Отправляем список больных
-              body: JSON.stringify({ rows }),
-            });
-            if (!response.ok) {
-              throw new Error('Ошибка при отправке данных о больных.');
-            }
-            setNeedSave(false);
-        } catch (error) {
-            console.error('Ошибка:', error);
-        } 
-    };      
+        setNeedSave(false);
+        sendToServer("http://localhost:5000/sick", { rows });
+    };
 
     return (
-        <div 
-            className="med_table-container" 
-            onContextMenu={(e) => handleTableContextMenu(e)}
-            onClick={(e) => handleTableClick(e)}
-        >
-            <table className="styled-table">
-                <thead>
-                    <tr>
-                        <th>№ п/п</th>
-                        <th>Воинское звание</th>
-                        <th>ФИО</th>
-                        <th>Состав подразделения</th>
-                        <th>Название лечебного учреждения</th>
-                        <th>Диагноз</th>
-                        <th>Дата госпитализации</th>
-                        <th>К/д</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map((row, rowIndex) => (
-                                <tr key={rowIndex}
+        <>
+            <button className="svg-container">
+                <img src="./printer.svg"/>
+            </button>
+            <div className='table_header'>
+                <h3>Справка-доклад по заболеваемости военнослужащих академии по сосмоянию на
+                    {" 01.01.2001"}
+                </h3>
+            </div>
+            <div
+                className="med_table-container"
+                onContextMenu={(e) => handleTableContextMenu(e)}
+                onClick={(e) => handleTableClick(e)}
+            >
+                <table className="styled-table">
+                    <thead>
+                        <tr>
+                            <th>№ п/п</th>
+                            <th>Воинское звание</th>
+                            <th>ФИО</th>
+                            <th>Состав подразделения</th>
+                            <th>Название лечебного учреждения</th>
+                            <th>Диагноз</th>
+                            <th>Дата госпитализации</th>
+                            <th>К/д</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows.map((row, rowIndex) => (
+                            <tr key={rowIndex}
                                 onContextMenu={(e) => handleContextMenu(e, rowIndex)}
                                 onClick={(e) => setSelectedRowIndex(rowIndex)}
                                 className={selectedRowIndex === rowIndex ? 'row-selected' : ''}
-                                >
-                                    <td>{rowIndex + 1}</td>
-                                    <td>{row.rank}</td>
-                                    <td>{row.name}</td>
-                                    <td>{row.group}</td>
-                                    <td>
-                                        <ComboBox 
+                            >
+                                <td>{rowIndex + 1}</td>
+                                <td>{row.rank}</td>
+                                <td>{row.name}</td>
+                                <td>{row.group}</td>
+                                <td>
+                                    <ComboBox
                                         selectedItem={row.medInstitution}
-                                        onChange={(newValue) => 
+                                        onChange={(newValue) =>
                                             handleChange(rowIndex, "medInstitution", newValue?.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input className='cell-input'
-                                                type="text"
-                                                value={row.diagnosis}
-                                                onChange={(e) => handleChange(rowIndex, "diagnosis", e.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input className='cell-input'
-                                                type="text"
-                                                value={row.date}
-                                                onChange={(e) => handleChange(rowIndex, "date", e.target.value)}
-                                        />
-                                    </td>
-                                    <td>
-                                        <input className='cell-input'
-                                                type="text"
-                                                value={row["k/l"]}
-                                                onChange={(e) => handleChange(rowIndex, "k/l", e.target.value)}
-                                        />
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <div className='undertable_block'>
-                <button
-                    className='med_table-button'
-                    onClick={async () => {
-                        await onButtonSaveClicked();
-                    }}
-                    disabled={!needSave}
-                >
-                    Сохранить
-                </button>
+                                    />
+                                </td>
+                                <td>
+                                    <input className='cell-input'
+                                        type="text"
+                                        value={row.diagnosis || ""}
+                                        onChange={(e) => handleChange(rowIndex, "diagnosis", e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <input className='cell-input'
+                                        type="text"
+                                        value={row.date || ""}
+                                        onChange={(e) => handleChange(rowIndex, "date", e.target.value)}
+                                    />
+                                </td>
+                                <td>
+                                    <input className='cell-input'
+                                        type="text"
+                                        value={row["k/l"] || ""}
+                                        onChange={(e) => handleChange(rowIndex, "k/l", e.target.value)}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <div className='undertable_block'>
+                    <button
+                        className='med_table-button'
+                        onClick={async () => {
+                            await onButtonSaveClicked();
+                        }}
+                        disabled={!needSave}
+                    >
+                        Сохранить
+                    </button>
+                </div>
+                {isShowMenu &&
+                    <ContextMenu
+                        x={menuPosition.x}
+                        y={menuPosition.y}
+                        handleDelete={handleDelete}
+                        handleInsert={handleInsert}
+                    />}
+                {isShowModal &&
+                    <ChooseMan
+                        items={loadedItems}
+                        handleCloseModal={closeModal}
+                    />}
             </div>
-            {isShowMenu &&
-                <ContextMenu
-                    x={menuPosition.x}
-                    y={menuPosition.y}
-                    handleDelete={handleDelete}
-                    handleInsert={handleInsert}
-                />}
-            {isShowModal &&
-                <ChooseMan
-                    items={loadedItems}
-                    handleCloseModal={closeModal}
-                />}
-        </div>
+        </>
     );
 };
 

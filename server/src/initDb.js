@@ -1,10 +1,9 @@
 // Модуль для работы с БД
-const { DB } = require('./db');
-const db = new DB('../test/cadets.db');
+const { DB } = require("./db");
+const db = new DB("../test/cadets.db");
 
 const {
-    getCourseList,
-    getBusyList
+    getCourseList
 } = require('./getList')
 
 // Асинхронная функция для обработки

@@ -1,5 +1,12 @@
 /* Table.css */
 
+.svg-container {
+  position: absolute;
+  top: 1vw;
+  left: 1vw;
+  cursor: pointer;
+}
+
 .table_header {
   display: flex;
   justify-content: center;
@@ -11,11 +18,11 @@
   margin-left: 5vw;
   border-collapse: collapse;
 }
-
+  
 .styled-table th, .styled-table td {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
 }
 
 .styled-table th {

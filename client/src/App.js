@@ -1,22 +1,15 @@
 import { Routes, Route, useNavigate } from 'react-router-dom';
 
 import Login from './Login';
-
-import GeneralTable from './Table/GeneralTable';
-// Моя собственная таблица
-import EditTable from './Table/TableEditor';
+import GeneralTable from './Table/GeneralTableView';
 // React таблица
-import EditTable2 from './Table/TableEditor2';
-
-
-
+import EditTable2 from './Table/CourseTableView';
 import MedTable from './Table/MedTable/MedTable';
 
-
-// Объект модели таблицы пятого курса 
-let tableModelFifthCourse = null;
 // Настройки отображения даты 
 export const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+// Настройки отображения времени 
+export const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
 // Перевод колонок
 export const translateForColumns =
 {
