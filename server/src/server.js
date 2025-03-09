@@ -34,17 +34,6 @@ app.use(express.json());
 // Путь к файлу с больными
 const filePathSick = './test/больные/sick.json';
 
-//Столбцы у таблиц
-const columnsNames = [
-    "service",
-    "lazaret",
-    "hospital",
-    "trip",
-    "vacation",
-    "dismissal",
-    "other"
-]
-
 // Обработка POST-запроса
 app.post('/checkLogin', (req, res) => {
     // Доступ к данным формы
@@ -157,7 +146,7 @@ app.post('/busyList', async (req, res) => {
     }
     
     // Обновляем запись о сохранении в бд
-    await db.insertRowInSaveTable(numberOfCourse, formData.date, formData.savedName, formData.savedRank);
+    await db.insertRowInSaveTable(numberOfCourse, formData.dateAndTime, formData.savedName, formData.savedRank);
     
     return res.status(200);
 })
@@ -206,11 +195,8 @@ app.get('/busyList', async (req, res) => {
                 break;
             default:
                 return res.status(404);
-        }
-        
-        
-    }
-    else {
+        }       
+    } else {
         // 0 курс - это факультет
         course = 0;
         
@@ -241,7 +227,7 @@ app.get('/busyList', async (req, res) => {
     if (saveRow) {
         response.rank = saveRow.rank;
         response.name = saveRow.name;
-        response.date = saveRow.date;
+        response.date = saveRow.dateAndTime;
     }
     // Отправляем JSON-ответ
     return res.status(200).json({...response});

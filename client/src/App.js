@@ -8,6 +8,8 @@ import MedTable from './Table/MedTable/MedTable';
 
 // Настройки отображения даты 
 export const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+// Настройки отображения времени 
+export const timeOptions = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
 // Перевод колонок
 export const translateForColumns =
 {

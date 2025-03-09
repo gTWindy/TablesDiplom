@@ -1,5 +1,5 @@
 import { action } from "mobx";
-import {dateOptions} from '../App';
+import {dateOptions, timeOptions} from '../App';
 import { getFromServer, sendToServer } from "../Net";
 
 // Базовая модель данных
@@ -85,11 +85,12 @@ class BaseTableModel {
 
     // Отправляем список занятых на сервер
     sendBusyListToServer  = async () => {
+        const date = new Date();
         const objectToSend = {
             people: this.manListBusy,
             savedName: this.savedName,
             savedRank: this.savedRank,
-            date: new Date().toLocaleDateString("ru-RU", dateOptions)
+            dateAndTime: date.toLocaleDateString("ru-RU", dateOptions) + " " + date.toLocaleTimeString("ru-RU", timeOptions)
         };
         if (this.numberOfCourse) {
             objectToSend.numberOfCourse = this.numberOfCourse;

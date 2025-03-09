@@ -108,7 +108,7 @@ class DB {
         const sql = `
             CREATE TABLE IF NOT EXISTS saves (
                 course INTEGER PRIMARY KEY,
-                date DATE,
+                dateAndTime TEXT,
                 name TEXT,
                 rank TEXT
             );
@@ -284,15 +284,15 @@ class DB {
     }
 
     // Вставить запись о сохранении
-    async insertRowInSaveTable(numberOfCourse, date, name, rank) {
-        const sql = `INSERT INTO saves (course, date, name, rank)
-                    VALUES (:numberOfCourse, :date, :name, :rank)
+    async insertRowInSaveTable(numberOfCourse, dateAndTime, name, rank) {
+        const sql = `INSERT INTO saves (course, dateAndTime, name, rank)
+                    VALUES (:numberOfCourse, :dateAndTime, :name, :rank)
                     ON CONFLICT(course) DO UPDATE SET
-                        date = EXCLUDED.date,
+                        dateAndTime = EXCLUDED.dateAndTime,
                         name = EXCLUDED.name,
                         rank = EXCLUDED.rank;
                         `;
-        return this.run(sql, [numberOfCourse, date, name, rank]);
+        return this.run(sql, [numberOfCourse, dateAndTime, name, rank]);
     }
 
     async removeSaveRowByCourse(course) {
