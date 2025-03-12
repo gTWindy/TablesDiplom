@@ -18,9 +18,31 @@ const courseTranslate = [
     "Пятый курс"
 ]
 
+function parseDate(str) {
+    // Разбиваем строку на массив чисел
+    const parts = str.split('.').map(Number);
+    
+    // Создаем новый объект Date, передавая год, месяц (январь — 0), день
+    return new Date(parts[2], parts[1] - 1, parts[0]);
+}
+
+function getDaysBetweenDates(date1, date2) {
+    // Преобразуем даты в миллисекунды
+    const time1 = date1.getTime();
+    const time2 = date2.getTime();
+
+    // Вычисляем разницу в миллисекундах
+    const diffInMs = Math.abs(time2 - time1);
+
+    // Преобразуем разницу в дни
+    const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    return days;
+}
+
 const MedTable = () => {
     // Строки таблицы
-    const [rows, setRows] = useState([{}]);
+    const [rows, setRows] = useState([]);
     // Позиция для кастомного меню
     const [menuPosition, setMenuPosition] = useState({ x: null, y: null });
     // Индекс строки, по которой кликнули правой кнопкой
@@ -208,11 +230,7 @@ const MedTable = () => {
                                     />
                                 </td>
                                 <td>
-                                    <input className='cell-input'
-                                        type="text"
-                                        value={row["k/l"] || ""}
-                                        onChange={(e) => handleChange(rowIndex, "k/l", e.target.value)}
-                                    />
+                                    {getDaysBetweenDates(parseDate(row.date), new Date())}
                                 </td>
                             </tr>
                         ))}

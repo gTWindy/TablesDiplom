@@ -3,11 +3,8 @@ import { useMemo } from 'react';
 import '../Table/Table.css';
 import { observer } from "mobx-react-lite";
 
+// Список столбцов для таблицы
 const columns = [
-  {
-    Header: 'N п/п',
-    accessor: 'number',
-  },
   {
     Header: 'Подразделение',
     accessor: 'groupNumber',
@@ -57,15 +54,12 @@ const EditTable = observer(({ dataToView, onCellClick, isGeneralTable }) => {
     const memoizedColumns = useMemo(
         () => {
             if (isGeneralTable) {
-                columns[1].Header = "Курс";
-                columns[1].accessor = "course";
+                columns[0].Header = "Курс";
+                columns[0].accessor = "course";
             }
             return columns.map(column => ({
                 ...column,
                 Cell: ({ value, row, column: { id } }) => {
-                    // Добавляем порядковый номер строки, если это первый столбец
-                    if (id === 'number')
-                        return row.index + 1;
                     // Если последняя строка т.е. строка "Всего"
                     if (row.index === 5) {
                         return <span>{value}</span>;
