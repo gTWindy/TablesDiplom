@@ -22,7 +22,7 @@ async function processData() {
         for (let course = 0; course < 5; course++) {
             for (let group in сourses[course]) {
                 for (let cadet of сourses[course][group]) {
-                    db.insertCadet(course + 1, group, serial, cadet['Воинское звание'], cadet['ФИО'],
+                    await db.insertCadet(course + 1, group, serial, cadet['Воинское звание'], cadet['ФИО'],
                         cadet['Дата рождения'], cadet['Номер телефона'], cadet['Личный номер']);
                 }
             }

@@ -47,38 +47,19 @@ class DB {
             )
         `;
         
-        return new Promise((resolve, reject) => {
-            this.db.run(sql, err => {
-                if (err) {
-                    console.error(`Ошибка создания таблицы cadets: ${err.message}`);
-                    reject(err);
-                } else {
-                    console.log('db: Таблица КУРСАНТЫ создана');
-                    resolve();
-                }
-            });
-        });
+        await this.run(sql);
     }
 
     async createTableBusy() {
         const sql = `
             CREATE TABLE IF NOT EXISTS busy (
                 id TEXT REFERENCES cadets(id) PRIMARY KEY,
-                type TEXT CHECK(type IN ("service", "lazaret", "hospital", "trip", "vacation", "dismissal", "other"))
+                type TEXT CHECK(type IN ("service", "lazaret", "hospital", "trip", "vacation", "dismissal", "other")),
+                remark TEXT
             )
         `;
         
-        return new Promise((resolve, reject) => {
-            this.db.run(sql, err => {
-                if (err) {
-                    console.error(`db: Ошибка создания таблицы busy: ${err.message}`);
-                    reject(err);
-                } else {
-                    console.log('db: Таблица BUSY создана');
-                    resolve();
-                }
-            });
-        });
+        await this.run(sql);
     }
 
     async createTableSick() {
@@ -91,20 +72,11 @@ class DB {
             );
         `;
         
-        return new Promise((resolve, reject) => {
-            this.db.run(sql, err => {
-                if (err) {
-                    console.error(`db: Ошибка создания таблицы SICK: ${err.message}`);
-                    reject(err);
-                } else {
-                    console.log('db: Таблица SICK создана');
-                    resolve();
-                }
-            });
-        });
+        await this.run(sql);
     }
 
     async createAndFillTableSaves() {
+        // 0 - за факультет, 1...5 - за курс, 6 - лазарет
         const sql = `
             CREATE TABLE IF NOT EXISTS saves (
                 course INTEGER PRIMARY KEY,
@@ -114,26 +86,17 @@ class DB {
             );
             
             INSERT INTO saves(course, date, name, rank)
-            VALUES (0, '1901-12-01', '', ''),
+            VALUES (0, DATE('now'), '', ''),
                     (1, DATE('now'), '', ''),
                     (2, DATE('now'), '', ''),
                     (3, DATE('now'), '', ''),
                     (4, DATE('now'), '', ''),
-                    (5, DATE('now'), '', '');
+                    (5, DATE('now'), '', ''),
+                    (6, DATE('now'), '', '');
         });
         `;
         
-        return new Promise((resolve, reject) => {
-            this.db.run(sql, err => {
-                if (err) {
-                    console.error(`db: Ошибка создания таблицы saves: ${err.message}`);
-                    reject(err);
-                } else {
-                    console.log('db: Таблица saves создана');
-                    resolve();
-                }
-            });
-        });
+        await this.run(sql);
     }
 
     async run(sql, params = []) {
@@ -173,15 +136,9 @@ class DB {
     }
 
     // Вставка нового курсанта
-    insertCadet(course, group, serial, rank , name, birthday, phone, id) {
+    async insertCadet(course, group, serial, rank , name, birthday, phone, id) {
         const sql = `INSERT OR IGNORE INTO cadets (course, 'group', serial, rank , name, birthday, phone, id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        this.db.run(sql, [course, group, serial, rank , name, birthday, phone, id], (err) => {
-            if (err) {
-                console.error(err.message);
-            } else {
-                console.log(`Row inserted with ID ${id}`);
-            }
-        });
+        await this.run(sql, [course, group, serial, rank , name, birthday, phone, id]);
     }
 
     // Получение всех курсантов
@@ -225,12 +182,14 @@ class DB {
     }
 
     // Вставить занятого курсанта в таблицу
-    async insertOrUpdateBusyTable(id, type) {
-        const sql = `INSERT INTO busy (id, type)
-                    VALUES (:id, :type)
+    async insertOrUpdateBusyTable(id, type, remark) {
+        const sql = `INSERT INTO busy (id, type, remark)
+                    VALUES (:id, :type, :remark)
                     ON CONFLICT(id) DO UPDATE SET
-                        type = EXCLUDED.type;`;
-        return this.run(sql, [id, type]);
+                        type = EXCLUDED.type,
+                        remark = EXCLUDED.remark;
+                    `;
+        return await this.run(sql, [id, type, remark]);
     }
 
     // Взять список занятых по курсу

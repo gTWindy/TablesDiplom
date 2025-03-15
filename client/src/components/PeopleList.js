@@ -43,9 +43,11 @@ const PeopleList = ({ props }) => {
             ...column,
             Cell: ({ value, row, column: { id } }) => {
                 // Для столбца "Примечание" даем возможность что-то писать
-                if (id === "remark")
-                    return <input/>
-                else {
+                if (id === "remark") {
+                    return <input
+                        onChange={(event)=> props.setRemarkForBusy(row.index, event.target.value)}
+                    />
+                } else {
                     // Для остальных столбцов выводим обычное значение
                     return <span>{value}</span>;
                 }

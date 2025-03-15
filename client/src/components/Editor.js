@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 
 import ChooseMan from '../components/ChooseMan/ChooseMan';
 import '../Table/Table.css';
@@ -86,7 +86,10 @@ const Editor = observer(({ tableModel, isGeneralTable }) => {
             </div>
             <PeopleList props={{
                 peopleList: tableModel?.getBusyManListForTable() || [],
-                isGeneralTable
+                isGeneralTable,
+                setRemarkForBusy: useCallback((index, remark) => {
+                    tableModel?.setRemarkForBusy(index, remark);
+                }, [tableModel])
             }}>
             </PeopleList>
             {chooseManOpen &&

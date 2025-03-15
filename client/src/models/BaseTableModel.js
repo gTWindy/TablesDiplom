@@ -12,6 +12,8 @@ class BaseTableModel {
     savedRank = null;
     // Список id людей по строкам, которые уже заняты (болеют, в наряде и т.д.)
     manListBusy = [];
+    // Примечания для занятых людей
+    remarksOfBusyByIndex = new Map();
 
     constructor() {
         this.setBusyManListAction = action(this.setBusyManIdList.bind(this));
@@ -83,11 +85,16 @@ class BaseTableModel {
         return busyPeople.flat();
     }
 
+    setRemarkForBusy = (index, remark) => {
+        this.remarksOfBusyByIndex[index] = remark;
+    }
+
     // Отправляем список занятых на сервер
     sendBusyListToServer  = async () => {
         const date = new Date();
         const objectToSend = {
             people: this.manListBusy,
+            remarks: this.remarksOfBusyByIndex,
             savedName: this.savedName,
             savedRank: this.savedRank,
             dateAndTime: date.toLocaleDateString("ru-RU", dateOptions) + " " + date.toLocaleTimeString("ru-RU", timeOptions)

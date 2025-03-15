@@ -49,7 +49,8 @@ const MedTable = () => {
     const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
     // Признак наличия несохраненных изменений
     const [needSave, setNeedSave] = useState(false);
-
+    // Время последнего сохранения
+    const [saveDateAndTime, setSaveDateAndTime] = useState("");
     const [isShowMenu, setShowMenu] = useState(false);
     const [isShowModal, setShowModal] = useState(false);
 
@@ -67,8 +68,10 @@ const MedTable = () => {
                 return;
             }
             // Установка полученных данных в состояние
-            setRows(resultSick);
-            
+            setRows(resultSick.rows);
+            // Установка полученных данных о времени последнего сохранения
+            setSaveDateAndTime(resultSick.dateAndTime);
+
             const newData = Object.keys(result).map(course => ({
                 title: courseTranslate[course],
                 key: course,
@@ -166,7 +169,10 @@ const MedTable = () => {
     // Нажатие кнопки сохранить
     const onButtonSaveClicked = async () => {
         setNeedSave(false);
-        sendToServer("http://localhost:5000/sick", { rows });
+        sendToServer("http://localhost:5000/sick", { 
+            rows,
+            dateAndTime: new Date().toLocaleDateString('ru-RU', dateOptions)
+         });
     };
 
     return (
@@ -175,8 +181,8 @@ const MedTable = () => {
                 <img src="./printer.svg"/>
             </button>
             <div className='table_header'>
-                <h3>Справка-доклад по заболеваемости военнослужащих академии по сосмоянию на
-                    {" 01.01.2001"}
+                <h3>Справка-доклад по заболеваемости военнослужащих академии по сосмоянию на 
+                    {" "+saveDateAndTime}
                 </h3>
             </div>
             <div

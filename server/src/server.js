@@ -137,11 +137,12 @@ app.post('/busyList', async (req, res) => {
         await db.clearBusyTable(4);
         await db.clearBusyTable(5);
     }
-
+    // Примечания по занятым
+    const remarks = formData.remarks;
     // Вставляем занятых в бд
     for (const group of formData.people) {
         for (let columnName in group) {
-            group[columnName].forEach(async (busyManId) => await db.insertOrUpdateBusyTable(busyManId, columnName));
+            group[columnName].forEach(async (busyManId) => await db.insertOrUpdateBusyTable(busyManId, columnName, ""));
         }
     }
     
@@ -234,7 +235,7 @@ app.get('/busyList', async (req, res) => {
 })
 
 // Получаем список больных
-app.get('/sick', (req, res) => {
+app.get('/sick', async (req, res) => {
     // Читаем файл
     const data = fs.readFileSync(filePathSick, 'utf8');
     let parsedData = null;
@@ -261,9 +262,13 @@ app.get('/sick', (req, res) => {
             {...parsedData}
         );
     }
-    // Отправляем JSON-ответ как массив
-    return res.status(200).json(
-        [...parsedData]
+    // Получаем дату и время последнего сохранения лазарета
+    const row = await db.selectSaveRowByCourse(6);
+    // Отправляем JSON-ответ
+    return res.status(200).json({
+        rows: [...parsedData],
+        dateAndTime: row.dateAndTime
+    }
     );
     
 });
@@ -278,6 +283,7 @@ app.post('/sick', async (req, res) => {
 
     // Новые данные находятся в объекте formData
     const newSickList = formData.rows;
+    const dateAndTime = formData.dateAndTime;
 
     // Преобразуем списки в множества для работы с уникальными элементами
     const oldSet = new Set(oldSickList);
@@ -292,9 +298,12 @@ app.post('/sick', async (req, res) => {
     // Создаем список курсов, где есть изменения
     const groupChangeSet = new Set(added.map((sickMan) => sickMan.course))
     removed.forEach((sickMan) => groupChangeSet.add(sickMan.course));
-    // Удаляем записи о сохранении
+    
+    // Удаляем записи о сохранении для таблицы за курс
     groupChangeSet.forEach((course) => db.removeSaveRowByCourse(course))
-
+    // Добавляем запись о сохранении таблицы Лазарет
+    await db.insertRowInSaveTable(6, dateAndTime, '', '');
+    
     // Вставляем новеньких
     for (const sickMan of added) {
         db.insertOrUpdateBusyTable(sickMan["Личный номер"], sickMan.medInstitution);
