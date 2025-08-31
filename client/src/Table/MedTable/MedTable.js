@@ -40,7 +40,7 @@ const MedTable = () => {
             // Загружаем список больных
             const resultSick = await getFromServer("http://localhost:5000/sick");
             // Загружаем список всех курсантов, для возможности выбора нового больного
-            const result = getFromServer("http://localhost:5000/manList");
+            const result = await getFromServer("http://localhost:5000/manList");
             if (!resultSick || !result) {
                 return;
             }
