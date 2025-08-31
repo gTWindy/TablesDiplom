@@ -68,13 +68,18 @@ const PeopleList = ({ props }) => {
         <>
             <table {...getTableProps()} className="styled-table table_of_absent">
                 <thead>
-                    {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                            ))}
-                        </tr>
-                    ))}
+                    {headerGroups.map(headerGroup => {
+                        const {key, ...headerGroupProps} = headerGroup.getHeaderGroupProps();
+                        return (
+                            <tr key={key} {...headerGroupProps}>
+                                {headerGroup.headers.map(column => {
+                                    const {key, ...columnProps} = column.getHeaderProps();
+                                    return (
+                                        <th key={key} {...columnProps}>{column.render('Header')}</th>
+                                    )
+                                })}
+                            </tr>
+                    )})}
                 </thead>
                 <tbody {...getTableBodyProps()}>
                     {rows.map((row) => {
