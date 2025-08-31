@@ -84,11 +84,14 @@ const PeopleList = ({ props }) => {
                 <tbody {...getTableBodyProps()}>
                     {rows.map((row) => {
                         prepareRow(row);
+                        const {key, ...rowProps} = row.getRowProps();
                         return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map((cell) => (
-                                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                ))}
+                            <tr key={key}{...rowProps}>
+                                {row.cells.map(cell => {
+                                    const {key, ...cellProps} = cell.getCellProps();
+                                    return (
+                                    <td key={key}{...cellProps}>{cell.render('Cell')}</td>
+                                )})}
                             </tr>
                         );
                     })}
