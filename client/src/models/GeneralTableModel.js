@@ -18,7 +18,7 @@ class GeneralTableModel extends BaseTableModel {
 
     // Загружаем данные с сервера
     loadData = async () => {
-        await this.makeRequest(`http://localhost:5000/busyList`,
+        await this.makeRequest(`http://localhost:5000/api/busyList`,
             (loadedData) => {
                 this.savedDate = loadedData.date;
                 this.savedName = loadedData.name;
@@ -33,7 +33,7 @@ class GeneralTableModel extends BaseTableModel {
 
 
         // Загружаем список всех курсантов, для возможности показа списка
-        await this.makeRequest("http://localhost:5000/manList",
+        await this.makeRequest("http://localhost:5000/api/manList",
             (data) => {
                 let groupsList = [];
                 for (let course in data) {

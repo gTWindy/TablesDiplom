@@ -38,9 +38,9 @@ const MedTable = () => {
 
         const fetchData = async () => {
             // Загружаем список больных
-            const resultSick = await getFromServer("http://localhost:5000/sick");
+            const resultSick = await getFromServer("http://localhost:5000/api/sick");
             // Загружаем список всех курсантов, для возможности выбора нового больного
-            const result = getFromServer("http://localhost:5000/manList");
+            const result = await getFromServer("http://localhost:5000/api/manList");
             if (!resultSick || !result) {
                 return;
             }

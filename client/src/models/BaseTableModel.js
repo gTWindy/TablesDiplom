@@ -96,7 +96,7 @@ class BaseTableModel {
             objectToSend.numberOfCourse = this.numberOfCourse;
         }
 
-        await sendToServer("http://localhost:5000/busyList", objectToSend);
+        await sendToServer("http://localhost:5000/api/busyList", objectToSend);
     }
 }
 
