@@ -18,14 +18,14 @@ class TableEditorModel extends BaseTableModel{
   };
 
   // Загружаем данные с сервера
-  loadData = async () => {
-    this.makeRequest(`http://localhost:5000/manList?course=${this.numberOfCourse}`,
+  loadData = () => {
+    this.makeRequest(`http://localhost:5000/api/manList?course=${this.numberOfCourse}`,
       (result) => {
         this.manList = result;
       }
     );
     
-    await this.makeRequest(`http://localhost:5000/busyList?course=${this.numberOfCourse}`,
+    this.makeRequest(`http://localhost:5000/api/busyList?course=${this.numberOfCourse}`,
       (result) => {
         this.savedDate = result.date;
         this.savedName = result.name;

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import './ChooseMan.css';
 import Modal from 'react-modal';
 

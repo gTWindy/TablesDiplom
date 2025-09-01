@@ -13,7 +13,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\server\\src\\server.js",
-            "cwd": "${workspaceFolder}\\server\\"
+            "cwd": "${workspaceFolder}\\server\\src"
         }
     ]
 }

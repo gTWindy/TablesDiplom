@@ -13,7 +13,7 @@ const LoginForm = ({ onAuthenticate }) => {
     console.log('Логин:', username);
     console.log('Пароль:', password);
 
-    const response = await sendToServer("http://localhost:5000/checkLogin", { username, password });
+    const response = await sendToServer("http://localhost:5000/api/checkLogin", { username, password });
     if (response) { 
       console.log('Успешный вход:', response);
       setError("");
